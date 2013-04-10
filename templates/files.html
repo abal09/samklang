@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block content %}
+<form method="POST" action="/files/" class="dropzone" id="file-dropzone" enctype="multipart/form-data">
+    <div class="fallback">
+        <input name="file" type="file" multiple />
+    </div>
+</form>
+
+<table style="width: 100%">
+    {% for file in files %}
+    <tr>
+        <td><img class="thumbnail" src="{{ url_for('media', filename=file.slug) }}"></td>
+        <td>{{ file.name}}</td>
+        <td>{{ file.content_type }}</td>
+        <td>{{ file.content_length }}</td>
+        <td>{{ file.slug }}</td>
+        <td><a class="button secondary small delete_file" href="{{ url_for('files_delete', id=file.id) }}">Delete</td>
+    </tr>
+    {% endfor %}
+    </table>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $(".delete_file").click(function (ev) {
+        ev.preventDefault();
+        var link = $(this);
+        var url = link.attr("href");
+        $.ajax({
+            url: url,
+            type: 'post'
+        }).done(function (data) {
+            if (data.status == true) {
+                console.log(link.parent());
+                link.parent().parent().fadeOut(500, function () {
+                    $(this).remove();
+                });
+            }
+        });
+    });
+
+    $('img.thumbnail').each(function() {
+        var maxWidth = 120;
+        var maxHeight = 80;
+        var ratio = 0;
+        var width = $(this).width();
+        var height = $(this).height();
+
+        if(width > maxWidth){
+            ratio = maxWidth / width;
+            $(this).css("width", maxWidth);
+            $(this).css("height", height * ratio);
+            height = height * ratio;
+            width = width * ratio;
+        }
+
+        if(height > maxHeight){
+            ratio = maxHeight / height;
+            $(this).css("height", maxHeight);
+            $(this).css("width", width * ratio);
+            width = width * ratio;
+        }
+    });
+});
+</script>
+{% endblock js %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='js/vendor/dropzone.js') }}"></script>
+{% endblock %}
+
+{% block css_files %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dropzone.css') }}" />
+{% endblock %}

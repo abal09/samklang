@@ -51,8 +51,12 @@
 {% endblock %}
 
 {% block js %}
-var editor = new wysihtml5.Editor("w5-textarea", {
-  toolbar:      "wysihtml5-toolbar", // id of toolbar element
-  parserRules:  wysihtml5ParserRules // defined in parser rules set 
+<script>
+$(document).ready(function() {
+    var editor = new wysihtml5.Editor("w5-textarea", {
+        toolbar:      "wysihtml5-toolbar", // id of toolbar element
+        parserRules:  wysihtml5ParserRules // defined in parser rules set 
+    });
 });
+</script>
 {% endblock js %}

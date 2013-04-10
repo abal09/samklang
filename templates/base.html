@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}" />
+  {% block css_files %}{% endblock %}
 
   <script src="{{ url_for('static', filename='js/vendor/custom.modernizr.js') }}"></script>
 
@@ -100,7 +101,7 @@
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='js/vendor/zepto.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vendor/jquery.js') }}"></script>
 <script src="{{ url_for('static', filename='js/foundation.min.js') }}"></script>
   <!--
   
@@ -137,7 +138,7 @@
   {% block js_files %}{% endblock js_files %}
   <script>
     $(document).foundation();
-    {% block js %}{% endblock js %}
   </script>
+  {% block js %}{% endblock js %}
 </body>
 </html>
