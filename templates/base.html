@@ -16,6 +16,31 @@
 
 </head>
 <body>
+{% if session.username %}
+<nav class="top-bar">
+    <ul class="title-area">
+        <li class="name">
+        <h1><a href="/">vcard</a></h1>
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+    </ul>
+    <section class="top-bar-section">
+        <ul class="left">
+            <li><a href="/files/">Files</a></li>
+        </ul>
+        <ul class="right">
+            <li class="has-dropdown"><a>{{ session.username }}</a>
+            <ul class="dropdown">
+                <li><a href="{{ url_for('logout') }}">Log out</a></li>
+            </ul>
+            </li>
+        </ul>
+    </section>
+</nav>
+{% else %}
+<a href="{{ url_for('login') }}" style="float: right" class="button secondary">Log in</a>
+{% endif %}
+
 <div class="row" id="container">
     <div class="small-12 columns" id="main">
         {% block content %}
@@ -131,9 +156,9 @@
   
   <script src="js/foundation/foundation.tooltips.js"></script>
   
-  <script src="js/foundation/foundation.topbar.js"></script>
-  
   -->
+  <script src="{{ url_for('static', filename='js/foundation/foundation.topbar.js') }}"></script>
+  
   
   {% block js_files %}{% endblock js_files %}
   <script>

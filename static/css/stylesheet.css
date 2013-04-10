@@ -7,7 +7,7 @@ html, body, #container, #main {
     height: 98%;
     position: relative;
 }
-section {
+#form-contents {
     position: absolute;
     top: 52px;
     bottom: 0;

@@ -33,14 +33,16 @@
             <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">Cancel</a>
         </div>
     </div>
-<section>
+<section id="form-contents">
     <textarea name="description" id="w5-textarea" autofocus>{{ description }}</textarea>
     </section>
 </form>
 {% else %}
+{% if session.username %}
 <div>
     <a href="{{ url_for('index') }}?edit=true" class="button" style="float:right">Edit</a>
 </div>
+{% endif %}
 {{ description|safe }}
 {% endif %}
 {% endblock %}

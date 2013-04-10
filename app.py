@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join, session
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from models import Site, File
@@ -9,6 +9,17 @@ import os
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db = MongoEngine(app)
+
+# fake login
+@app.route("/login", methods=["POST", "GET"])
+def login():
+    session['username'] = "user"
+    return redirect(url_for('index'))
+
+@app.route("/logout")
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 @app.route("/", methods=["POST", "GET"])
 def index():
