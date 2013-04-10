@@ -1,0 +1,26 @@
+html, body, #container, #main {
+    height: 100%;
+}
+#wysihtml5-toolbar {
+}
+#editform {
+    height: 98%;
+    position: relative;
+}
+section {
+    position: absolute;
+    top: 52px;
+    bottom: 0;
+    width: 100%;
+}
+#w5-textarea {
+    height: 100%;
+}
+.wysiwyg-float-right {
+    float: right;
+    padding: 0 0 5px 10px;
+}
+.wysiwyg-float-left {
+    float: right;
+    padding: 0 10px 5px 0;
+}
