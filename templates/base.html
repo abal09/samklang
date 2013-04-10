@@ -5,18 +5,22 @@
 <head>
 	<meta charset="utf-8" />
   <meta name="viewport" content="width=device-width" />
-  <title>Foundation 4</title>
+  <title>{% block title %}vcard{% endblock title %}</title>
 
-  <link rel="stylesheet" href="css/normalize.css" />
-  
-  <link rel="stylesheet" href="css/foundation.css" />
-  
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}" />
 
-  <script src="js/vendor/custom.modernizr.js"></script>
+  <script src="{{ url_for('static', filename='js/vendor/custom.modernizr.js') }}"></script>
 
 </head>
 <body>
-
+<div class="row">
+    <div class="small-12 columns">
+        {% block content %}
+        vcard web example
+        {% endblock content %}
+    </div>
+</div>
 	<div class="row">
 		<div class="large-12 columns">
 			<h2>Welcome to Foundation</h2>
