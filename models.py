@@ -7,6 +7,25 @@ class Site(Document):
     description = StringField()
     created = DateTimeField(default=datetime.datetime.now)
 
+    meta = {
+            'ordering': ['-created']
+            }
+
+    @classmethod
+    def get_by_hostname(cls, hostname):
+        from config import ROOT_DOMAIN
+
+        host = hostname.split(":")[0]
+        if host.endswith("." + ROOT_DOMAIN):
+            strip_length = len(ROOT_DOMAIN) + 1
+            host = host[:-strip_length]
+        site = cls.objects(domain=host).first()
+        if not site:
+            #flash("%s not found" % host)
+            site = cls.objects.first()
+        return site
+
+
 class File(Document):
     name = StringField(required=True)
     slug = StringField(required=True)

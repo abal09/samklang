@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join, session
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join, session, g
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from models import Site, File
@@ -10,6 +10,10 @@ app = Flask(__name__)
 app.config.from_pyfile('config.py')
 db = MongoEngine(app)
 
+@app.before_request
+def add_site():
+    g.site = Site.get_by_hostname(request.host)
+
 # fake login
 @app.route("/login", methods=["POST", "GET"])
 def login():
@@ -20,6 +24,22 @@ def login():
 def logout():
     session.pop('username', None)
     return redirect(url_for('index'))
+
+@app.route("/sites", methods=["POST", "GET"])
+def sites():
+    if request.method == "POST":
+        domain = request.form["domain"]
+        name = request.form["name"]
+        if domain and name:
+            site = Site()
+            site.name = name.strip()
+            site.domain = domain.strip()
+            conflicting_site = Site.objects.filter(domain=site.domain).first()
+            if not conflicting_site:
+                site.save()
+        return redirect(url_for("sites"))
+    sites = Site.objects.all()  # use this for checking if domain name is available
+    return render_template("sites.html", sites=sites)
 
 @app.route("/", methods=["POST", "GET"])
 def index():
