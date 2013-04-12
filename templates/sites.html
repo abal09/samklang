@@ -2,7 +2,7 @@
 
 {% block title %}All sites{% endblock %}
 
-{% block content %}
+{% block main %}
 <h1>New site</h1>
 <form method="POST">
     
@@ -37,7 +37,14 @@
     {% for site in sites %}
     <tr>
         <td>{{ site.name }}</td>
-        <td>{{ site.domain }}</td>
+        <td><a href="//{{ site.domain }}
+        {%- if g.root_domain -%}
+        .{{ g.root_domain }}
+        {%- endif -%}
+        {%- if g.port -%}
+        :{{ g.port }}
+        {%- endif -%}
+        ">{{ site.domain }}</a></td>
         <td>{{ site.created }}</td>
     </tr>
     {% endfor %}

@@ -30,6 +30,7 @@
             <li><a href="/sites">Sites</a></li>
         </ul>
         <ul class="right">
+            {% block context_menu %}{% endblock %}
             <li class="has-dropdown"><a>{{ session.username }}</a>
             <ul class="dropdown">
                 <li><a href="{{ url_for('logout') }}">Log out</a></li>
@@ -44,7 +45,7 @@
 
 <div class="row" id="container">
     <div class="small-12 columns" id="main">
-        {% block content %}
+        {% block main %}
 	<div class="row">
 		<div class="large-12 columns">
 			<h2>Welcome to Foundation</h2>
@@ -123,7 +124,7 @@
 			</ul>
 		</div>
 	</div>
-        {% endblock content %}
+        {% endblock main %}
         <ul id="footer" class="small-block-grid-{{ g.site.footers|length}}">
             {% for footer in g.site.footers %}
             <li>{{ footer|safe }}</li>

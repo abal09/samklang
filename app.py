@@ -13,6 +13,10 @@ db = MongoEngine(app)
 @app.before_request
 def add_site():
     g.site = Site.get_by_hostname(request.host)
+    g.root_domain = app.config["ROOT_DOMAIN"]
+    g.port = app.config.get("PORT", 5000)
+    if "DEBUG" in app.config:
+        g.debug = app.config["DEBUG"]
 
 # fake login
 @app.route("/login", methods=["POST", "GET"])
@@ -43,7 +47,7 @@ def sites():
 
 @app.route("/", methods=["POST", "GET"])
 def index():
-    site, created = Site.objects.get_or_create(domain="eksempel.no", name="Eksempelnettsted")
+    site = g.site
     if request.method == "POST":
         if request.files["header_image"]:
             site.header_image, length = save_file(request.files["header_image"])
@@ -109,4 +113,4 @@ def files():
     return render_template('files.html', files=files)
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=app.config.get("DEBUG", True))

@@ -1,6 +1,17 @@
-{% extends "base.html" %}
+{% extends "normal.html" %}
 
 {% block title %}Welcome{% endblock %}
+
+{% block context_menu %}
+{% if session.username %}
+{% if edit %}
+{% else %}
+<li class="has-form">
+    <a href="{{ url_for('index') }}?edit=true" class="button" style="float:right">Edit</a>
+</li>
+{% endif %}
+{% endif %}
+{% endblock %}
 
 {% block content %}
 {% if edit and session.username %}
@@ -10,7 +21,9 @@
 
     <label for="header">Header image for all pages</label>
     <input type="file" name="header_image" id="header-image">
+    {% if g.site.header_image %}
     <img src="{{ url_for('media', filename=g.site.header_image) }}">
+    {% endif %}
 
     <label for="description">Home page contents</label>
     <div class="button-bar" id="wysihtml5-toolbar" style="display: none;">
@@ -41,9 +54,10 @@
         </div>
     </div>
     <section id="form-contents">
-        <textarea name="description" id="w5-textarea" autofocus>{{ description }}</textarea>
+        <textarea name="description" id="w5-textarea" autofocus>{{ g.site.description }}</textarea>
     </section>
 
+    <label>Footer columns</label>
     {% for footer in g.site.footers %}
     <textarea name="footer">{{ footer }}</textarea>
     {% endfor %}
@@ -51,15 +65,7 @@
 
 </form>
 {% else %}
-{% if session.username %}
-<div>
-    <a href="{{ url_for('index') }}?edit=true" class="button" style="float:right">Edit</a>
-</div>
-{% endif %}
-{% if g.site.header_image %}
-<img src="{{ url_for('media', filename=g.site.header_image) }}">
-{% endif %}
-{{ description|safe }}
+{{ g.site.description|safe }}
 {% endif %}
 {% endblock %}
 

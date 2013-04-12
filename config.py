@@ -1,3 +1,4 @@
+DEBUG = True
 MONGODB_SETTINGS = {
         "DB": 'test',
         }
