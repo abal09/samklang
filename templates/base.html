@@ -10,6 +10,13 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}" />
+  {% if g.site.header_image %}
+  <style>
+#header {
+    background-image: url({{ url_for('media', filename=g.site.header_image, suffix="png") }});
+}
+    </style>
+  {% endif %}
   {% block css_files %}{% endblock %}
 
   <script src="{{ url_for('static', filename='js/vendor/custom.modernizr.js') }}"></script>

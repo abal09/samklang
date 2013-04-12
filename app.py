@@ -64,11 +64,16 @@ def index():
         edit = True
     else:
         edit = False
+    print g.site.header_image
     return render_template('index.html', description=site.description, edit=edit)
 
 @app.route("/media/<path:filename>")
-def media(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+@app.route("/media/<path:filename>.<suffix>")
+def media(filename, suffix=None):
+    if suffix:
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    else:
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 @app.route("/files/delete/<id>", methods=["POST"])
 def files_delete(id):
