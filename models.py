@@ -1,4 +1,5 @@
-from mongoengine import Document, StringField, DateTimeField, IntField
+from mongoengine import Document
+from mongoengine import StringField, DateTimeField, IntField, ListField
 import datetime
 
 class Site(Document):
@@ -6,6 +7,7 @@ class Site(Document):
     name = StringField(required=True)
     description = StringField()
     header_image = StringField()
+    footers = ListField(StringField())
     created = DateTimeField(default=datetime.datetime.now)
 
     meta = {

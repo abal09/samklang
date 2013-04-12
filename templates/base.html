@@ -124,10 +124,11 @@
 		</div>
 	</div>
         {% endblock content %}
-        <div id="footer">
-        {{ g.site.name }}
-        {{ g.site.domain }}
-        </div>
+        <ul id="footer" class="small-block-grid-{{ g.site.footers|length}}">
+            {% for footer in g.site.footers %}
+            <li>{{ footer|safe }}</li>
+            {% endfor %}
+        </ul>
     </div>
 </div>
 

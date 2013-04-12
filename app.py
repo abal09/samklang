@@ -47,6 +47,12 @@ def index():
     if request.method == "POST":
         if request.files["header_image"]:
             site.header_image, length = save_file(request.files["header_image"])
+        site.footers = []
+        footers = request.form.getlist("footer")
+        print footers
+        for footer in footers:
+            if footer:
+                site.footers.append(footer)
         site.description = request.form["description"]
         site.save()
         return redirect(url_for("index"))

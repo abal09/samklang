@@ -40,9 +40,15 @@
             <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">Cancel</a>
         </div>
     </div>
-<section id="form-contents">
-    <textarea name="description" id="w5-textarea" autofocus>{{ description }}</textarea>
+    <section id="form-contents">
+        <textarea name="description" id="w5-textarea" autofocus>{{ description }}</textarea>
     </section>
+
+    {% for footer in g.site.footers %}
+    <textarea name="footer">{{ footer }}</textarea>
+    {% endfor %}
+    <textarea name="footer" placeholder="Fill this if you need it"></textarea>
+
 </form>
 {% else %}
 {% if session.username %}
