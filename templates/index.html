@@ -3,9 +3,16 @@
 {% block title %}Welcome{% endblock %}
 
 {% block content %}
-{% if edit %}
-<form method="POST" id="editform">
+{% if edit and session.username %}
+<form method="POST" id="editform" enctype="multipart/form-data">
+
     <button type="submit" style="float:right">Save</button>
+
+    <label for="header">Header image for all pages</label>
+    <input type="file" name="header_image" id="header-image">
+    <img src="{{ url_for('media', filename=g.site.header_image) }}">
+
+    <label for="description">Home page contents</label>
     <div class="button-bar" id="wysihtml5-toolbar" style="display: none;">
         <ul class="button-group">
             <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" class="small button secondary"><b>H1</b></a></li>
@@ -15,12 +22,12 @@
             <li><a data-wysihtml5-command="insertImage" class="small button secondary">Image</a></li>
             <li class="button small secondary action" title="Show HTML" data-wysihtml5-action="change_view" href="javascript:;" unselectable="on">&lt;/&gt;</li>
         </ul>
-        <div data-wysihtml5-dialog="createLink" style="display: none;">
+        <div data-wysihtml5-dialog="createLink" style="display: none;" class="popup">
             <label>Link: <input data-wysihtml5-dialog-field="href" value="http://" class="text"></label>
             <a data-wysihtml5-dialog-action="save" class="button tiny">OK</a>
             <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">Cancel</a>
         </div>
-        <div data-wysihtml5-dialog="insertImage" style="display: none;">
+        <div data-wysihtml5-dialog="insertImage" style="display: none;" class="popup">
             <input value="http://" data-wysihtml5-dialog-field="src" class="text">
             Align:
             <select data-wysihtml5-dialog-field="className" style="width: inherit">
@@ -42,6 +49,9 @@
 <div>
     <a href="{{ url_for('index') }}?edit=true" class="button" style="float:right">Edit</a>
 </div>
+{% endif %}
+{% if g.site.header_image %}
+<img src="{{ url_for('media', filename=g.site.header_image) }}">
 {% endif %}
 {{ description|safe }}
 {% endif %}

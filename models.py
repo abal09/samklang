@@ -5,6 +5,7 @@ class Site(Document):
     domain = StringField(required=True)
     name = StringField(required=True)
     description = StringField()
+    header_image = StringField()
     created = DateTimeField(default=datetime.datetime.now)
 
     meta = {

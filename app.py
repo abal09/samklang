@@ -45,6 +45,8 @@ def sites():
 def index():
     site, created = Site.objects.get_or_create(domain="eksempel.no", name="Eksempelnettsted")
     if request.method == "POST":
+        if request.files["header_image"]:
+            site.header_image = save_file(request.files["header_image"])
         site.description = request.form["description"]
         site.save()
         return redirect(url_for("index"))
@@ -69,6 +71,22 @@ def githash(data):
     hsh.update("blob %u\0" % len(data))
     hsh.update(data)
     return hsh.hexdigest()
+
+def save_file(reqfile):
+    reqfile_path = safe_join(app.config['UPLOAD_FOLDER'], secure_filename(reqfile.filename))
+    reqfile.save(reqfile_path)
+    with file(reqfile_path) as __f:
+        ghash = githash(__f.read())
+    new_dir = safe_join(app.config['UPLOAD_FOLDER'], ghash[0:2])
+    new_filename = ghash[2:40]
+    new_path = safe_join(new_dir, new_filename)
+    try:
+        os.makedirs(new_dir)
+    except OSError:
+        pass  # dir already exists: OK
+    os.rename(reqfile_path, new_path)
+    print new_path
+    return safe_join(ghash[0:2], ghash[2:40])
 
 @app.route("/files/", methods=["POST", "GET"])
 def files():
