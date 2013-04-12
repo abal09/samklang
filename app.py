@@ -38,6 +38,7 @@ def sites():
             site = Site()
             site.name = name.strip()
             site.domain = domain.strip()
+            site.description = "<h1>Introductory text</h1><p>This should contain simple help about what is changeable and how.</p>"
             conflicting_site = Site.objects.filter(domain=site.domain).first()
             if not conflicting_site:
                 site.save()
