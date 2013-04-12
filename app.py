@@ -45,27 +45,26 @@ def sites():
     sites = Site.objects.all()  # use this for checking if domain name is available
     return render_template("sites.html", sites=sites)
 
-@app.route("/", methods=["POST", "GET"])
+@app.route("/")
 def index():
+    return render_template('index.html')
+
+@app.route("/edit", methods=["POST", "GET"])
+def edit():
     site = g.site
     if request.method == "POST":
         if request.files["header_image"]:
             site.header_image, length = save_file(request.files["header_image"])
         site.footers = []
         footers = request.form.getlist("footer")
-        print footers
         for footer in footers:
             if footer:
                 site.footers.append(footer)
+        site.name = request.form["name"]
         site.description = request.form["description"]
         site.save()
         return redirect(url_for("index"))
-    if request.args.get('edit'):
-        edit = True
-    else:
-        edit = False
-    print g.site.header_image
-    return render_template('index.html', description=site.description, edit=edit)
+    return render_template('edit.html')
 
 @app.route("/media/<path:filename>")
 @app.route("/media/<path:filename>.<suffix>")

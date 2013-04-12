@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome{% endblock %}
+
+{% block main %}
+{% if session.username %}
+<form method="POST" id="editform" enctype="multipart/form-data">
+
+    <button type="submit" style="float:right">Save</button>
+
+    <label for="name">Site name</label>
+    <input type="type" name="name" id="name" value="{{ g.site.name }}">
+
+    <label for="header">Header image for all pages</label>
+    <input type="file" name="header_image" id="header-image">
+    {% if g.site.header_image %}
+    <img src="{{ url_for('media', filename=g.site.header_image) }}">
+    {% endif %}
+
+    <label for="description">Home page contents</label>
+    <div class="button-bar" id="wysihtml5-toolbar" style="display: none;">
+        <ul class="button-group">
+            <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" class="small button secondary"><b>H1</b></a></li>
+            <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" class="small button secondary"><b>h2</b></a></li>
+            <li><a data-wysihtml5-command="bold" class="small button secondary"><b>B</b></a></li>
+            <li><a data-wysihtml5-command="createLink" class="small button secondary">Link</a></li>
+            <li><a data-wysihtml5-command="insertImage" class="small button secondary">Image</a></li>
+            <li class="button small secondary action" title="Show HTML" data-wysihtml5-action="change_view" href="javascript:;" unselectable="on">&lt;/&gt;</li>
+        </ul>
+        <div data-wysihtml5-dialog="createLink" style="display: none;" class="popup">
+            <label>Link: <input data-wysihtml5-dialog-field="href" value="http://" class="text"></label>
+            <a data-wysihtml5-dialog-action="save" class="button tiny">OK</a>
+            <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">Cancel</a>
+        </div>
+        <div data-wysihtml5-dialog="insertImage" style="display: none;" class="popup">
+            <input value="http://" data-wysihtml5-dialog-field="src" class="text">
+            Align:
+            <select data-wysihtml5-dialog-field="className" style="width: inherit">
+                <!--<option value="">default</option>-->
+                <option value="wysiwyg-float-left">left</option>
+                <option value="wysiwyg-float-right">right</option>
+            </select>
+            <br>
+            <a data-wysihtml5-dialog-action="save" class="button tiny">OK</a>
+            <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">Cancel</a>
+        </div>
+    </div>
+    <section id="form-contents">
+        <textarea name="description" id="w5-textarea" autofocus>{{ g.site.description }}</textarea>
+    </section>
+
+    <label>Footer columns</label>
+    {% for footer in g.site.footers %}
+    <textarea name="footer">{{ footer }}</textarea>
+    {% endfor %}
+    <textarea name="footer" placeholder="Fill this if you need it"></textarea>
+
+</form>
+{% endif %}
+{% endblock main %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='js/vendor/advanced.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vendor/wysihtml5-0.3.0.js') }}"></script>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    var editor = new wysihtml5.Editor("w5-textarea", {
+        toolbar:      "wysihtml5-toolbar", // id of toolbar element
+        parserRules:  wysihtml5ParserRules // defined in parser rules set 
+    });
+});
+</script>
+{% endblock js %}

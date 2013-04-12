@@ -9,4 +9,9 @@
 
 {% block content %}
 {% endblock %}
+<ul id="footer" class="small-block-grid-{{ g.site.footers|length}}">
+    {% for footer in g.site.footers %}
+    <li>{{ footer|safe }}</li>
+    {% endfor %}
+</ul>
 {% endblock main %}
