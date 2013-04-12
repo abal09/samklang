@@ -46,7 +46,7 @@ def index():
     site, created = Site.objects.get_or_create(domain="eksempel.no", name="Eksempelnettsted")
     if request.method == "POST":
         if request.files["header_image"]:
-            site.header_image = save_file(request.files["header_image"])
+            site.header_image, length = save_file(request.files["header_image"])
         site.description = request.form["description"]
         site.save()
         return redirect(url_for("index"))
@@ -67,16 +67,17 @@ def files_delete(id):
     return jsonify(status=True)
 
 def githash(data):
+    length = len(data)
     hsh = sha1()
-    hsh.update("blob %u\0" % len(data))
+    hsh.update("blob %u\0" % length)
     hsh.update(data)
-    return hsh.hexdigest()
+    return hsh.hexdigest(), length
 
 def save_file(reqfile):
     reqfile_path = safe_join(app.config['UPLOAD_FOLDER'], secure_filename(reqfile.filename))
     reqfile.save(reqfile_path)
     with file(reqfile_path) as __f:
-        ghash = githash(__f.read())
+        ghash, length = githash(__f.read())
     new_dir = safe_join(app.config['UPLOAD_FOLDER'], ghash[0:2])
     new_filename = ghash[2:40]
     new_path = safe_join(new_dir, new_filename)
@@ -85,8 +86,7 @@ def save_file(reqfile):
     except OSError:
         pass  # dir already exists: OK
     os.rename(reqfile_path, new_path)
-    print new_path
-    return safe_join(ghash[0:2], ghash[2:40])
+    return safe_join(ghash[0:2], ghash[2:40]), length
 
 @app.route("/files/", methods=["POST", "GET"])
 def files():
@@ -96,21 +96,7 @@ def files():
         f.name = reqfile.filename
         f.slug = secure_filename(f.name)
         f.content_type = reqfile.mimetype
-        reqfile_path = safe_join(app.config['UPLOAD_FOLDER'], f.slug)
-        reqfile.save(reqfile_path)
-        f.content_length = os.path.getsize(reqfile_path)
-        with file(reqfile_path) as __f:
-            f.ghash = githash(__f.read())
-        new_dir = safe_join(app.config['UPLOAD_FOLDER'], f.ghash[0:2])
-        new_filename = f.ghash[2:40]
-        new_path = safe_join(new_dir, new_filename)
-        print f.content_length
-        try:
-            os.makedirs(new_dir)
-        except OSError:
-            pass  # dir already exists: OK
-        os.rename(reqfile_path, new_path)
-        f.slug = safe_join(f.ghash[0:2], f.ghash[2:40])
+        f.slug, f.content_length = save_file(reqfile)
         f.save()
 
     files = File.objects.all()
