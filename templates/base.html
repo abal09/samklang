@@ -52,6 +52,19 @@
 
 <div class="row" id="container">
     <div class="small-12 columns" id="main">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flashes">
+            {% for category, message in messages %}
+            <div class="alert-box {{ category }} data-alert">
+                {{ message|safe }}
+                <a class="close" href="">×</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
         {% block main %}
 	<div class="row">
 		<div class="large-12 columns">
