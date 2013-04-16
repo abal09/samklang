@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block main %}
+<h1>Login</h1>
+
+<p>Enter the site's owner email address to send a login link.</p>
+
+<form method="POST">
+    <div class="row">
+        <div class="small-8 columns">
+            <div class="row">
+                <div class="small-3 columns">
+                    <label for="email" class="right inline">Email address</label>
+                </div>
+                <div class="small-9 columns">
+                    <input type="text" id="email" name="email" placeholder="you@example.com">
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-9 small-offset-3 columns">
+                    <button type="submit">Send login link</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock %}

@@ -1,9 +1,11 @@
 from mongoengine import Document
-from mongoengine import StringField, DateTimeField, IntField, ListField
+from mongoengine import StringField, DateTimeField, IntField, ListField, BooleanField
 import datetime
 
 class Site(Document):
     domain = StringField(required=True)
+    owner_email = StringField()  # Will get deprecated when user models arrive
+    verified_email = BooleanField(default=False)
     name = StringField(required=True)
     description = StringField()
     header_image = StringField()

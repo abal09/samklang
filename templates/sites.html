@@ -32,17 +32,18 @@
         </div>
     </div>
 </form>
+
 <h1>All sites</h1>
 <table>
     {% for site in sites %}
     <tr>
         <td>{{ site.name }}</td>
         <td><a href="//{{ site.domain }}
-        {%- if g.root_domain -%}
-        .{{ g.root_domain }}
+        {%- if root_domain -%}
+        .{{ root_domain }}
         {%- endif -%}
-        {%- if g.port -%}
-        :{{ g.port }}
+        {%- if port -%}
+        :{{ port }}
         {%- endif -%}
         ">{{ site.domain }}</a></td>
         <td>{{ site.created }}</td>
