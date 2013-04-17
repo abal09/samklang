@@ -1,15 +1,8 @@
-html, body, #container, #main {
-    height: 100%;
-}
-#wysihtml5-toolbar {
-}
-#form-contents {
-}
 #header-image {
     margin-bottom: 20px;
 }
 #w5-textarea {
-    height: 400px;
+    height: 460px;
 }
 .wysiwyg-float-right {
     float: right;
@@ -29,10 +22,33 @@ p {
     padding-top: 10px;
     margin-top: 20px;
 }
+#header {
+    background-repeat: no-repeat;
+}
 #header p {
     font-size: 400%;
     color: #ffffff;
     opacity: 0.6;
     padding: 32px 8px 0 8px;
     margin-bottom: 0;
+}
+
+#admin-button {
+    float: right;
+}
+
+#site-top-bar {
+    background-color: #eee;
+}
+#site-top-bar a {
+    color: #222;
+    background-color: #eee;
+}
+#site-top-bar a:hover {
+    color: #000;
+    background-color: #ddd;
+}
+#site-top-bar .menu-icon a span {
+    -webkit-box-shadow: 0 10px 0 1px #222, 0 16px 0 1px #222, 0 22px 0 1px #222;
+    box-shadow: 0 10px 0 1px #222, 0 16px 0 1px #222, 0 22px 0 1px #222;
 }
