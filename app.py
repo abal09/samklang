@@ -16,8 +16,6 @@ mail = Mail(app)
 def add_site():
     g.site = Site.get_by_hostname(request.host)
     g.user = session.get("username", None)
-    if "DEBUG" in app.config:
-        g.debug = app.config["DEBUG"]
 
 # fake login
 @app.route("/login", methods=["POST", "GET"])
@@ -40,7 +38,7 @@ def login():
                     "address of this domain" % email)
             return redirect(url_for("login"))
 
-        root_domain = app.config.get("ROOT_DOMAIN", None)
+        root_domain = app.config.get("DOMAIN_ROOT", None)
         port = app.config.get("PORT", 5000)
 
         code = sha1()
@@ -76,7 +74,7 @@ def logout():
 @app.route("/admin/email/add", methods=["POST", "GET"])
 def add_email():
     if request.method == "POST":
-        root_domain = app.config.get("ROOT_DOMAIN", None)
+        root_domain = app.config.get("DOMAIN_ROOT", None)
         port = app.config.get("PORT", 5000)
         email = request.form.get("email", None)
         if email:
@@ -145,7 +143,7 @@ def email_verify(verification_code):
 
 @app.route("/sites", methods=["POST", "GET"])
 def sites():
-    root_domain = app.config.get("ROOT_DOMAIN", None)
+    root_domain = app.config.get("DOMAIN_ROOT", None)
     port = app.config.get("PORT", 5000)
     if request.method == "POST":
         domain = request.form["domain"]
@@ -241,4 +239,4 @@ def files():
     return render_template('files.html', files=files)
 
 if __name__ == "__main__":
-    app.run(debug=app.config.get("DEBUG", True))
+    app.run()

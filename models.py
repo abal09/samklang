@@ -16,13 +16,16 @@ class Site(Document):
             'ordering': ['-created']
             }
 
+    def __unicode__(self):
+        return self.domain
+
     @classmethod
     def get_by_hostname(cls, hostname):
-        from config import ROOT_DOMAIN
+        from config import DOMAIN_ROOT
 
         host = hostname.split(":")[0]
-        if host.endswith("." + ROOT_DOMAIN):
-            strip_length = len(ROOT_DOMAIN) + 1
+        if host.endswith("." + DOMAIN_ROOT):
+            strip_length = len(DOMAIN_ROOT) + 1
             host = host[:-strip_length]
         site = cls.objects(domain=host).first()
         if not site:
