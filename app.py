@@ -235,13 +235,14 @@ def files():
     if request.method == "POST":
         reqfile = request.files['file']
         f = File()
+        f.site = g.site.domain
         f.name = reqfile.filename
         f.slug = secure_filename(f.name)
         f.content_type = reqfile.mimetype
         f.slug, f.content_length = save_file(reqfile)
         f.save()
 
-    files = File.objects.all()
+    files = File.objects(site=g.site.domain)
     return render_template('files.html', files=files)
 
 def slugify(value):
