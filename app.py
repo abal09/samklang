@@ -45,7 +45,7 @@ def login():
             return redirect(url_for("login"))
 
         root_domain = app.config.get("DOMAIN_ROOT")
-        port = app.config.get("PORT", 5000)
+        port = app.config.get("PORT", None)
 
         code = sha1()
         code.update(g.site.domain)
@@ -81,7 +81,7 @@ def logout():
 def add_email():
     if request.method == "POST":
         root_domain = app.config.get("DOMAIN_ROOT")
-        port = app.config.get("PORT", 5000)
+        port = app.config.get("PORT", None)
         email = request.form.get("email", None)
         if email:
             g.site.owner_email = email
@@ -150,7 +150,7 @@ def email_verify(verification_code):
 @app.route("/sites", methods=["POST", "GET"])
 def sites():
     root_domain = app.config.get("DOMAIN_ROOT")
-    port = app.config.get("PORT", 5000)
+    port = app.config.get("PORT", None)
     if request.method == "POST":
         domain = request.form["domain"]
         name = request.form["name"]
