@@ -7,14 +7,15 @@ from models import Site, File
 from hashlib import sha1
 import os
 
-app = Flask(__name__)
-app.config.from_pyfile('config.py')
+app = Flask(__name__, instance_relative_config=True)
+app.config.from_object('config')
+app.config.from_pyfile('config.cfg', silent=True)
 db = MongoEngine(app)
 mail = Mail(app)
 
 @app.before_request
 def add_site():
-    g.site = Site.get_by_hostname(request.host)
+    g.site = Site.get_by_hostname(request.host, app.config.get("DOMAIN_ROOT"))
     g.user = session.get("username", None)
 
 # fake login
@@ -38,7 +39,7 @@ def login():
                     "address of this domain" % email)
             return redirect(url_for("login"))
 
-        root_domain = app.config.get("DOMAIN_ROOT", None)
+        root_domain = app.config.get("DOMAIN_ROOT")
         port = app.config.get("PORT", 5000)
 
         code = sha1()
@@ -74,7 +75,7 @@ def logout():
 @app.route("/admin/email/add", methods=["POST", "GET"])
 def add_email():
     if request.method == "POST":
-        root_domain = app.config.get("DOMAIN_ROOT", None)
+        root_domain = app.config.get("DOMAIN_ROOT")
         port = app.config.get("PORT", 5000)
         email = request.form.get("email", None)
         if email:
@@ -143,7 +144,7 @@ def email_verify(verification_code):
 
 @app.route("/sites", methods=["POST", "GET"])
 def sites():
-    root_domain = app.config.get("DOMAIN_ROOT", None)
+    root_domain = app.config.get("DOMAIN_ROOT")
     port = app.config.get("PORT", 5000)
     if request.method == "POST":
         domain = request.form["domain"]

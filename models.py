@@ -20,16 +20,13 @@ class Site(Document):
         return self.domain
 
     @classmethod
-    def get_by_hostname(cls, hostname):
-        from config import DOMAIN_ROOT
-
+    def get_by_hostname(cls, hostname, domain_root):
         host = hostname.split(":")[0]
-        if host.endswith("." + DOMAIN_ROOT):
-            strip_length = len(DOMAIN_ROOT) + 1
+        if host.endswith("." + domain_root):
+            strip_length = len(domain_root) + 1
             host = host[:-strip_length]
         site = cls.objects(domain=host).first()
         if not site:
-            #flash("%s not found" % host)
             site = cls.objects.first()
         return site
 
