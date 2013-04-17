@@ -30,6 +30,7 @@ class Site(Document):
 
 
 class File(Document):
+    site = StringField(required=True)
     name = StringField(required=True)
     slug = StringField(required=True)
     content_type = StringField()
@@ -39,3 +40,17 @@ class File(Document):
     meta = {
             'ordering': ['-created']
             }
+
+class Page(Document):
+    site = StringField(required=True)
+    name = StringField(required=True)
+    slug = StringField(required=True)
+    content = StringField()
+    created = DateTimeField(default=datetime.datetime.now)
+
+    meta = {
+            'ordering': ['-created']
+            }
+
+    def __unicode__(self):
+        return self.name

@@ -1,8 +1,11 @@
+#!/usr/bin/env python
+# coding: utf-8
+
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join, session, g, flash, abort
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
-from models import Site, File
+from models import Site, File, Page
 
 from hashlib import sha1
 import os
@@ -240,6 +243,57 @@ def files():
 
     files = File.objects.all()
     return render_template('files.html', files=files)
+
+def slugify(value):
+    """
+    Normalizes a string using unidecode library. Lowercase it, remove
+    punctuation and replace spacing with hyphens.
+
+    >>> slugify(u'Blåbærsyltetøy')
+    'Blabaersyltetoy'
+    """
+    from unidecode import unidecode
+    import re
+
+    value = unidecode(value)
+    value = re.sub('[^\w\s-]', '', value).strip().lower()
+    return unicode(re.sub('[-\s]+', '-', value))
+
+@app.route("/pages/", methods=["POST", "GET"])
+def pages():
+    if request.method == "POST":
+        name = request.form['name']
+        if name:
+            p = Page()
+            p.name = name
+            p.slug = slugify(name)
+            p.site = g.site.domain
+            p.save()
+            return redirect(url_for("edit_page", slug=p.slug))
+    pages = Page.objects(site=g.site.domain)
+    return render_template('pages.html', pages=pages)
+
+@app.route("/<slug>/")
+def page(slug):
+    try:
+        page = Page.objects.get(slug=slug, site=g.site.domain)
+    except Page.DoesNotExist:
+        abort(404)
+    return render_template("page.html", page=page)
+
+@app.route("/<slug>/edit", methods=["POST", "GET"])
+def edit_page(slug):
+    try:
+        page = Page.objects.get(slug=slug, site=g.site.domain)
+    except Page.DoesNotExist:
+        abort(404)
+
+    if request.method == "POST":
+        page.name = request.form["name"]
+        page.content = request.form["content"]
+        page.save()
+        return redirect(url_for("page", slug=page.slug))
+    return render_template("edit_page.html", page=page)
 
 if __name__ == "__main__":
     app.run()

@@ -1,0 +1,13 @@
+{% extends "normal.html" %}
+
+{% block title %}{{ page.name }}{% endblock %}
+
+{% block content %}{{ page.content|safe }}{% endblock %}
+
+{% block context_menu %}
+{% if session.username %}
+<li class="has-form">
+    <a href="{{ url_for('edit_page', slug=page.slug) }}" class="button">Edit</a>
+</li>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "normal.html" %}
+
+{% block title %}All pages{% endblock %}
+
+{% block main %}
+<h1>New page</h1>
+<form method="POST">
+    
+    <div class="row">
+        <div class="small-8 columns">
+            <div class="row">
+                <div class="small-3 columns">
+                    <label for="name" class="right inline">Short title</label>
+                </div>
+                <div class="small-9 columns">
+                    <input type="text" id="name" name="name">
+                </div>
+            </div>
+            <div class="row">
+                <div class="small-9 small-offset-3 columns">
+                    <button type="submit">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<h1>All pages</h1>
+<table>
+    {% for page in pages %}
+    <tr>
+        <td><a href="{{ url_for('page', slug=page.slug) }}">{{ page.name }}</a></td>
+        <td>{{ page.created }}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
