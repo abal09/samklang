@@ -1,6 +1,11 @@
-from mongoengine import Document
-from mongoengine import StringField, DateTimeField, IntField, ListField, BooleanField
+from mongoengine import Document, EmbeddedDocument
+from mongoengine import StringField, DateTimeField, IntField, BooleanField
+from mongoengine import ListField, EmbeddedDocumentField
 import datetime
+
+class MenuLink(EmbeddedDocument):
+    text = StringField(required=True)
+    link = StringField(required=True)
 
 class Site(Document):
     domain = StringField(required=True)
@@ -10,6 +15,7 @@ class Site(Document):
     description = StringField()
     header_image = StringField()
     footers = ListField(StringField())
+    menu_links = ListField(EmbeddedDocumentField(MenuLink))
     created = DateTimeField(default=datetime.datetime.now)
 
     meta = {

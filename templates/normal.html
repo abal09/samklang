@@ -7,6 +7,22 @@
 </div>
 {% endif %}
 
+<nav class="top-bar">
+    <ul class="title-area">
+        <li class="name">
+        <h1><a href="/">{{ g.site.name }}</a></h1>
+        </li>
+        <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
+    </ul>
+
+    <section class="top-bar-section">
+        <ul class="left">
+            {% for menu_link in g.site.menu_links %}
+            <li><a href="{{ menu_link.link }}">{{ menu_link.text }}</a></li>
+            {% endfor %}
+        </ul>
+    </section>
+</nav>
 {% block content %}
 {% endblock %}
 <ul id="footer" class="small-block-grid-{{ g.site.footers|length}}">

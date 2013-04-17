@@ -1,0 +1,44 @@
+{% extends "normal.html" %}
+
+{% block title %}Site menu{% endblock %}
+
+{% block main %}
+<h1>Site menu</h1>
+<p>Here you control the contents of your menu. Rows with empty values will not get saved.</p>
+<form method="POST">
+{% for menu_link in menu_links %}
+<div class="row">
+    <div class="small-12 columns">
+        <h2>Menu element {{ loop.index }}</h2>
+    </div>
+    <div class="small-6 columns">
+        <label>Label</label>
+        <input type="text" name="text" value="{{ menu_link.text }}">
+    </div>
+    <div class="small-6 columns">
+        <label>Link</label>
+        <input type="text" name="link" value="{{ menu_link.link }}">
+    </div>
+</div>
+{% endfor %}
+<div class="row">
+    <div class="small-12 columns">
+        <h2>Fill in this entry if you need it</h2>
+    </div>
+    <div class="small-6 columns">
+        <label>Label</label>
+        <input type="text" name="text" value="">
+    </div>
+    <div class="small-6 columns">
+        <label>Link</label>
+        <input type="text" name="link" value="">
+    </div>
+</div>
+<div class="row">
+    <div class="small-12 columns">
+        <button type="submit">Save</button>
+    </div>
+</div>
+</form>
+
+{% endblock %}

@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
-from models import Site, File, Page
+from models import Site, File, Page, MenuLink
 
 from hashlib import sha1
 import os
@@ -245,6 +245,21 @@ def files():
     files = File.objects(site=g.site.domain)
     return render_template('files.html', files=files)
 
+@app.route("/menu/", methods=["POST", "GET"])
+def menu():
+    if request.method == "POST":
+        if "username" in session:
+            texts = request.form.getlist("text")
+            links = request.form.getlist("link")
+            g.site.menu_links = []
+            for text, link in zip(texts, links):
+                if text and link:
+                    g.site.menu_links.append(MenuLink(text=text, link=link))
+            g.site.save()
+        return redirect(url_for("menu"))
+
+    return render_template("menu.html", menu_links=g.site.menu_links)
+
 def slugify(value):
     """
     Normalizes a string using unidecode library. Lowercase it, remove
@@ -295,6 +310,7 @@ def edit_page(slug):
         page.save()
         return redirect(url_for("page", slug=page.slug))
     return render_template("edit_page.html", page=page)
+
 
 if __name__ == "__main__":
     app.run()
