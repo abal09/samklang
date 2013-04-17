@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join, session, g, flash
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join, session, g, flash, abort
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
@@ -16,6 +16,8 @@ mail = Mail(app)
 @app.before_request
 def add_site():
     g.site = Site.get_by_hostname(request.host, app.config.get("DOMAIN_ROOT"))
+    if g.site is None:
+        abort(404)
     g.user = session.get("username", None)
 
 # fake login

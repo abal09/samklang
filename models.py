@@ -26,8 +26,6 @@ class Site(Document):
             strip_length = len(domain_root) + 1
             host = host[:-strip_length]
         site = cls.objects(domain=host).first()
-        if not site:
-            site = cls.objects.first()
         return site
 
 
