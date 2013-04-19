@@ -180,7 +180,7 @@ def index():
 @app.route("/edit", methods=["POST", "GET"])
 def edit():
     site = g.site
-    if request.method == "POST":
+    if request.method == "POST" and g.site.domain == g.user:
         if request.files["header_image"]:
             site.header_image, length = save_file(request.files["header_image"])
         site.footers = []
@@ -204,9 +204,12 @@ def media(filename, suffix=None):
 
 @app.route("/files/delete/<id>", methods=["POST"])
 def files_delete(id):
-    f = File.objects.get(id=id)
-    f.delete()
-    return jsonify(status=True)
+    if g.site.domain == g.user:
+        f = File.objects.get(id=id)
+        f.delete()
+        return jsonify(status=True)
+    else:
+        return jsonify(status=False)
 
 def githash(data):
     length = len(data)
@@ -232,7 +235,7 @@ def save_file(reqfile):
 
 @app.route("/files/", methods=["POST", "GET"])
 def files():
-    if request.method == "POST":
+    if request.method == "POST" and g.site.domain == g.user:
         reqfile = request.files['file']
         f = File()
         f.site = g.site.domain
@@ -247,8 +250,8 @@ def files():
 
 @app.route("/menu/", methods=["POST", "GET"])
 def menu():
-    if request.method == "POST":
-        if "username" in session:
+    if request.method == "POST" and g.site.domain == g.user:
+        if "username" in session and g.user == g.site.domain:
             texts = request.form.getlist("text")
             links = request.form.getlist("link")
             g.site.menu_links = []
@@ -277,7 +280,7 @@ def slugify(value):
 
 @app.route("/pages/", methods=["POST", "GET"])
 def pages():
-    if request.method == "POST":
+    if request.method == "POST" and g.site.domain == g.user:
         name = request.form['name']
         if name:
             p = Page()
@@ -304,7 +307,7 @@ def edit_page(slug):
     except Page.DoesNotExist:
         abort(404)
 
-    if request.method == "POST":
+    if request.method == "POST" and g.site.domain == g.user:
         page.name = request.form["name"]
         page.content = request.form["content"]
         page.save()

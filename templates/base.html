@@ -23,7 +23,7 @@
 
 </head>
 <body>
-{% if session.username %}
+{% if g.site.domain == g.user %}
 <nav class="top-bar">
     <ul class="title-area">
         <li class="name">
@@ -39,7 +39,7 @@
         </ul>
         <ul class="right">
             {% block context_menu %}{% endblock %}
-            <li class="has-dropdown"><a>{{ session.username }}</a>
+            <li class="has-dropdown"><a>{{ g.user }}</a>
             <ul class="dropdown">
                 <li><a href="{{ url_for('logout') }}">Log out</a></li>
             </ul>

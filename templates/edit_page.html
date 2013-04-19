@@ -4,7 +4,7 @@
 
 {% block main %}
 
-{% if session.username %}
+{% if g.user == g.site.domain %}
 <form method="POST" id="editform">
 
     <button type="submit" style="float:right">Save</button>

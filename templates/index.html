@@ -3,7 +3,7 @@
 {% block title %}Welcome{% endblock %}
 
 {% block context_menu %}
-{% if session.username %}
+{% if g.site.domain == g.user %}
 <li class="has-form">
     <a href="{{ url_for('edit') }}" class="button">Edit</a>
 </li>
