@@ -5,6 +5,8 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
+from flask.ext.babel import Babel
+from flask.ext.babel import gettext as _
 from models import Site, File, Page, MenuLink
 
 from hashlib import sha1
@@ -15,6 +17,23 @@ app.config.from_object('config')
 app.config.from_pyfile('config.cfg', silent=True)
 db = MongoEngine(app)
 mail = Mail(app)
+babel = Babel(app)
+
+@babel.localeselector
+def get_locale():
+    # if a user is logged in, use the locale from the user settings
+    #user = getattr(g, 'user', None)
+    #if user is not None:
+        #return user.locale
+    # otherwise try to guess the language from the user accept
+    return request.accept_languages.best_match(['en', 'nb'])
+
+@babel.timezoneselector
+def get_timezone():
+    #user = getattr(g, 'user', None)
+    #if user is not None:
+        #return user.timezone
+    pass
 
 @app.before_request
 def add_site():
@@ -31,17 +50,21 @@ def login():
         #return redirect(url_for("add_email"))
 
         # log in without security
-        flash('Everybody can log in to your site and do changes until you add '
-                'an <a href="%s">owner email address</a>.' %
-                url_for("add_email"), 'secondary')
+        flash(
+                _('Everybody can log in to your site and do changes until you '
+                    'add an <a href="%(url)s">owner email address</a>.',
+                    url=url_for("add_email")),
+                'secondary')
         session["username"] = g.site.domain
         return redirect(url_for("index"))
 
     if request.method == "POST":
         email = request.form.get("email", None)
         if email != g.site.owner_email:
-            flash("That email address (%s) does not match the owner email "
-                    "address of this domain" % email)
+            flash(
+                    _("That email address (%(email)s) does not match the owner "
+                        "email address of this domain",
+                        email=email))
             return redirect(url_for("login"))
 
         root_domain = app.config.get("DOMAIN_ROOT")
@@ -59,16 +82,23 @@ def login():
         if port:
             host += ":%d" % port
 
-        message = Message("Log in to samklang",
-                sender=("Samklang", "post@samklang.no"),
+        message = Message(_("Log in to %(host)s", host=g.site.domain),
+                sender=("Samklang", "login@samklang.no"),
                 recipients=[g.site.owner_email],
                 )
-        message.body = (
-                "Log in to samklang by clicking the following link:\r\n\r\n" +
-                "http://%s%s\r\n\r\n" % (host, url_for('email_login', verification_code=code.hexdigest())) +
-                "Kthxbye\r\n")
+        message.body = _(
+                "Log in to samklang by clicking the following link:\r\n\r\n"
+                "http://%(host)s%(url)s\r\n\r\nKthxbye\r\n",
+                host=host,
+                url=url_for(
+                    'email_login',
+                    verification_code=code.hexdigest()
+                    ),
+                )
         mail.send(message)
-        flash("You should get an email soon. Click the link inside it to log in.")
+        flash(_(
+            "You should soon get an soon. Click the link inside it to log in."
+            ))
         return redirect(url_for("index"))
     return render_template("login.html")
 
@@ -99,21 +129,24 @@ def add_email():
             if port:
                 host += ":%d" % port
 
-            message = Message("Verify your email",
-                    sender=("Samklang", "post@samklang.no"),
+            message = Message(_("Verify your email"),
+                    sender=("Samklang", "login@samklang.no"),
                     recipients=[email],
                     )
-            message.body = (
-                    "Thanks for trying Samklang\r\n\r\n" +
-                    "Click the following link to verify that this address worked:\r\n" +
-                    "http://%s%s\r\n\r\n" % (host, url_for('email_verify', verification_code=code.hexdigest())) +
-                    "Kthxbye\r\n")
+            message.body = _(
+                    "Thanks for trying Samklang\r\n\r\n"
+                    "Click the following link to verify that this address worked:\r\n"
+                    "http://%(host)s%(url)s\r\n\r\nKthxbye\r\n",
+                    host=host,
+                    url=url_for('email_verify', verification_code=code.hexdigest()))
             mail.send(message)
-            flash("You should get an email soon. Click the link inside it to verify the address worked.")
+            flash(_("You should soon get an email soon. Click the link inside"
+                " it to verify the address worked."))
             return redirect(url_for("index"))
     else:
         if g.site.verified_email and "username" not in session:
-            return "Email already set, you need to log in using the old email address before you can set a new email address."
+            return _("Email already set, you need to log in using the old email"
+                    " address before you can set a new email address.")
     return render_template("add_email.html")
 
 @app.route("/login/<verification_code>")
@@ -125,10 +158,10 @@ def email_login(verification_code):
 
     if verification_code == code.hexdigest():
         session["username"] = g.site.domain
-        flash("You are now logged in")
+        flash(_("You are now logged in"))
         return redirect(url_for('index'))
     else:
-        return "The verification code is wrong"
+        return _("The verification code is wrong")
 
 @app.route("/admin/keep/<verification_code>")
 def email_verify(verification_code):
@@ -142,10 +175,10 @@ def email_verify(verification_code):
         g.site.save()
 
         session["username"] = g.site.domain
-        flash("Your site is now verified and you are logged in")
+        flash(_("Your site is now verified and you are logged in"))
         return redirect(url_for('index'))
     else:
-        return "The verification code is wrong"
+        return _("The verification code is wrong")
 
 @app.route("/sites", methods=["POST", "GET"])
 def sites():
@@ -158,11 +191,15 @@ def sites():
             site = Site()
             site.name = name.strip()
             site.domain = domain.strip()
-            site.description = "<h1>Introductory text</h1><p>This should contain simple help about what is changeable and how.</p>"
+            site.description = _("<h1>Introductory text</h1><p>This should "
+                    "contain simple help about what is changeable and how."
+                    "</p>")
             conflicting_site = Site.objects.filter(domain=site.domain).first()
             if not conflicting_site:
                 site.save()
-                flash("You now have a new site. Play around with it for up to 24 hours, or register to keep it.")
+                flash(_("You now have a new site. Play around with it for some "
+                    "time, or register by verifying your email address to keep "
+                    "it."))
                 url = "//%s" % site.domain
                 if root_domain:
                     url += ".%s" % root_domain

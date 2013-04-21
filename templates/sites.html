@@ -1,16 +1,15 @@
 {% extends "base.html" %}
 
-{% block title %}All sites{% endblock %}
+{% block title %}{% trans %}All sites{% endtrans %}{% endblock %}
 
 {% block main %}
-<h1>New site</h1>
+<h1>{% trans %}New site{% endtrans %}</h1>
 <form method="POST">
-    
     <div class="row">
         <div class="small-8 columns">
             <div class="row">
                 <div class="small-3 columns">
-                    <label for="domain" class="right inline">Domain name</label>
+                    <label for="domain" class="right inline">{% trans %}Domain name{% endtrans %}</label>
                 </div>
                 <div class="small-9 columns">
                     <input type="text" id="domain" name="domain" placeholder="example.com">
@@ -18,22 +17,22 @@
             </div>
             <div class="row">
                 <div class="small-3 columns">
-                    <label for="name" class="right inline">Site name</label>
+                    <label for="name" class="right inline">{% trans %}Site name{% endtrans %}</label>
                 </div>
                 <div class="small-9 columns">
-                    <input type="text" id="name" name="name" placeholder="My fantastic new site">
+                    <input type="text" id="name" name="name" placeholder="{% trans %}My fantastic new site{% endtrans %}">
                 </div>
             </div>
             <div class="row">
                 <div class="small-9 small-offset-3 columns">
-                    <button type="submit">Create</button>
+                    <button type="submit">{% trans %}Save{% endtrans %}</button>
                 </div>
             </div>
         </div>
     </div>
 </form>
 
-<h1>All sites</h1>
+<h1>{% trans %}All sites{% endtrans %}</h1>
 <table>
     {% for site in sites %}
     <tr>

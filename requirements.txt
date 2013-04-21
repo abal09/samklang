@@ -2,3 +2,4 @@ flask-mongoengine
 flask-sendmail
 gunicorn
 unidecode
+flask-babel

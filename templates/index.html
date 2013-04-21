@@ -1,11 +1,11 @@
 {% extends "normal.html" %}
 
-{% block title %}Welcome{% endblock %}
+{% block title %}{% trans %}Welcome{% endtrans %}{% endblock %}
 
 {% block context_menu %}
 {% if g.site.domain == g.user %}
 <li class="has-form">
-    <a href="{{ url_for('edit') }}" class="button">Edit</a>
+<a href="{{ url_for('edit') }}" class="button">{% trans %}Edit{% endtrans %}</a>
 </li>
 {% endif %}
 {% endblock %}

@@ -1,0 +1,265 @@
+# Translations template for PROJECT.
+# Copyright (C) 2013 ORGANIZATION
+# This file is distributed under the same license as the PROJECT project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2013.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PROJECT VERSION\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2013-04-21 16:23+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 0.9.6\n"
+
+#: app.py:63
+#, python-format
+msgid ""
+"Everybody can log in to your site and do changes until you add an <a "
+"href=\"%(url)s\">owner email address</a>."
+msgstr ""
+
+#: app.py:72
+#, python-format
+msgid ""
+"That email address (%(email)s) does not match the owner email address of "
+"this domain"
+msgstr ""
+
+#: app.py:92
+#, python-format
+msgid "Log in to %(host)s"
+msgstr ""
+
+#: app.py:102
+#, python-format
+msgid ""
+"Log in to samklang by clicking the following link:\r\n"
+"\r\n"
+"http://%(host)s%(url)s\r\n"
+"\r\n"
+"Kthxbye\r\n"
+msgstr ""
+
+#: app.py:106
+msgid "You should soon get an soon. Click the link inside it to log in."
+msgstr ""
+
+#: app.py:139
+msgid "Verify your email"
+msgstr ""
+
+#: app.py:148
+#, python-format
+msgid ""
+"Thanks for trying Samklang\r\n"
+"\r\n"
+"Click the following link to verify that this address worked:\r\n"
+"http://%(host)s%(url)s\r\n"
+"\r\n"
+"Kthxbye\r\n"
+msgstr ""
+
+#: app.py:150
+msgid ""
+"You should soon get an email soon. Click the link inside it to verify the"
+" address worked."
+msgstr ""
+
+#: app.py:155
+msgid ""
+"Email already set, you need to log in using the old email address before "
+"you can set a new email address."
+msgstr ""
+
+#: app.py:168
+msgid "You are now logged in"
+msgstr ""
+
+#: app.py:171 app.py:188
+msgid "The verification code is wrong"
+msgstr ""
+
+#: app.py:185
+msgid "Your site is now verified and you are logged in"
+msgstr ""
+
+#: app.py:201
+msgid ""
+"<h1>Introductory text</h1><p>This should contain simple help about what "
+"is changeable and how.</p>"
+msgstr ""
+
+#: app.py:207
+msgid ""
+"You now have a new site. Play around with it for some time, or register "
+"by verifying your email address to keep it."
+msgstr ""
+
+#: templates/add_email.html:3 templates/add_email.html:6
+msgid "Add owner email"
+msgstr ""
+
+#: templates/add_email.html:8
+msgid ""
+"This email address will be used when you log in to change your site. The\n"
+"email address you add will be verified by sending out an email with an\n"
+"activation link."
+msgstr ""
+
+#: templates/add_email.html:11
+msgid "This is needed to make your site permanent."
+msgstr ""
+
+#: templates/add_email.html:16 templates/login.html:15
+msgid "Email address"
+msgstr ""
+
+#: templates/base.html:30 templates/normal.html:29
+msgid "Admin"
+msgstr ""
+
+#: templates/base.html:36
+msgid "Files"
+msgstr ""
+
+#: templates/base.html:37
+msgid "Pages"
+msgstr ""
+
+#: templates/base.html:38
+msgid "Menu"
+msgstr ""
+
+#: templates/base.html:44
+msgid "Log out"
+msgstr ""
+
+#: templates/edit.html:9 templates/edit_page.html:10 templates/menu.html:39
+#: templates/pages.html:20 templates/sites.html:28
+msgid "Save"
+msgstr ""
+
+#: templates/edit.html:11 templates/sites.html:20
+msgid "Site name"
+msgstr ""
+
+#: templates/edit.html:14
+msgid "Header image for all pages"
+msgstr ""
+
+#: templates/edit.html:20 templates/edit_page.html:16
+msgid "Home page contents"
+msgstr ""
+
+#: templates/edit.html:26 templates/edit_page.html:22 templates/menu.html:19
+#: templates/menu.html:33
+msgid "Link"
+msgstr ""
+
+#: templates/edit.html:27 templates/edit_page.html:23
+msgid "Image"
+msgstr ""
+
+#: templates/edit.html:32 templates/edit.html:44 templates/edit_page.html:28
+#: templates/edit_page.html:40
+msgid "OK"
+msgstr ""
+
+#: templates/edit.html:33 templates/edit.html:45 templates/edit_page.html:29
+#: templates/edit_page.html:41
+msgid "Cancel"
+msgstr ""
+
+#: templates/edit.html:52
+msgid "Footer columns"
+msgstr ""
+
+#: templates/edit.html:56
+msgid "Fill this if you need it"
+msgstr ""
+
+#: templates/edit_page.html:3
+msgid "Edit page"
+msgstr ""
+
+#: templates/edit_page.html:12
+msgid "Page name"
+msgstr ""
+
+#: templates/index.html:3
+msgid "Welcome"
+msgstr ""
+
+#: templates/index.html:8 templates/page.html:10
+msgid "Edit"
+msgstr ""
+
+#: templates/login.html:3 templates/login.html:6
+msgid "Login"
+msgstr ""
+
+#: templates/login.html:8
+msgid "Enter the site's owner email address to send a login link."
+msgstr ""
+
+#: templates/login.html:23
+msgid "Send login link"
+msgstr ""
+
+#: templates/menu.html:3 templates/menu.html:6
+msgid "Site menu"
+msgstr ""
+
+#: templates/menu.html:7
+msgid ""
+"Here you control the contents of your menu. Rows with empty values will "
+"not get saved."
+msgstr ""
+
+#: templates/menu.html:12
+#, python-format
+msgid "Menu element %(number)s"
+msgstr ""
+
+#: templates/menu.html:15 templates/menu.html:29
+msgid "Label"
+msgstr ""
+
+#: templates/menu.html:26
+msgid "Fill in this entry if you need it"
+msgstr ""
+
+#: templates/pages.html:3 templates/pages.html:27
+msgid "All pages"
+msgstr ""
+
+#: templates/pages.html:6
+msgid "New page"
+msgstr ""
+
+#: templates/pages.html:12
+msgid "Short title"
+msgstr ""
+
+#: templates/sites.html:3 templates/sites.html:35
+msgid "All sites"
+msgstr ""
+
+#: templates/sites.html:6
+msgid "New site"
+msgstr ""
+
+#: templates/sites.html:12
+msgid "Domain name"
+msgstr ""
+
+#: templates/sites.html:23
+msgid "My fantastic new site"
+msgstr ""
+

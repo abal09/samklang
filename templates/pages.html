@@ -1,16 +1,15 @@
 {% extends "normal.html" %}
 
-{% block title %}All pages{% endblock %}
+{% block title %}{% trans %}All pages{% endtrans %}{% endblock %}
 
 {% block main %}
-<h1>New page</h1>
+<h1>{% trans %}New page{% endtrans %}</h1>
 <form method="POST">
-    
     <div class="row">
         <div class="small-8 columns">
             <div class="row">
                 <div class="small-3 columns">
-                    <label for="name" class="right inline">Short title</label>
+                    <label for="name" class="right inline">{% trans %}Short title{% endtrans %}</label>
                 </div>
                 <div class="small-9 columns">
                     <input type="text" id="name" name="name">
@@ -18,14 +17,14 @@
             </div>
             <div class="row">
                 <div class="small-9 small-offset-3 columns">
-                    <button type="submit">Create</button>
+                    <button type="submit">{% trans %}Save{% endtrans %}</button>
                 </div>
             </div>
         </div>
     </div>
 </form>
 
-<h1>All pages</h1>
+<h1>{% trans %}All pages{% endtrans %}</h1>
 <table>
     {% for page in pages %}
     <tr>

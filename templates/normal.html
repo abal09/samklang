@@ -26,7 +26,7 @@
 {% block content %}
 {% endblock %}
 {% if "username" not in session %}
-<a href="{{ url_for('login') }}" id="admin-button" class="button secondary tiny">Admin</a>
+<a href="{{ url_for('login') }}" id="admin-button" class="button secondary tiny">{% trans %}Admin{% endtrans %}</a>
 {% endif %}
 <ul id="footer" class="small-block-grid-{{ g.site.footers|length}}">
     {% for footer in g.site.footers %}

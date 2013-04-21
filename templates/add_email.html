@@ -1,19 +1,19 @@
 {% extends "base.html" %}
 
-{% block title %}Add owner email{% endblock %}
+{% block title %}{% trans %}Add owner email{% endtrans %}{% endblock %}
 
 {% block main %}
-<h1>Add owner email</h1>
+<h1>{% trans %}Add owner email{% endtrans %}</h1>
 
-<p>This email address will be used when you log in to change your site. The
+<p>{% trans %}This email address will be used when you log in to change your site. The
 email address you add will be verified by sending out an email with an
-activation link.</p>
-<p>This is needed to make your site permanent.</p>
+activation link.{% endtrans %}</p>
+<p>{% trans %}This is needed to make your site permanent.{% endtrans %}</p>
 
 <form method="POST">
     <div class="row">
         <div class="large-8 columns small-12">
-            <label for="email">Email address</label>
+            <label for="email">{% trans %}Email address{% endtrans %}</label>
             <input type="text" id="email" name="email" placeholder="you@example.com" value="{{ g.site.owner_email|default("", true) }}">
             <button type="submit">Save</button>
         </div>
