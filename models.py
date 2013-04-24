@@ -101,3 +101,35 @@ class Portfolio(Document):
     @property
     def all_jobs(self):
         return Job.objects.filter(site=self.site)
+
+class Blog(Document):
+    site = StringField(required=True)
+    active = BooleanField(default=False)
+    title = StringField()
+
+    def __unicode__(self):
+        if self.title:
+            return self.title
+        else:
+            return _("Blog")
+
+    @property
+    def all_posts(self):
+        return Post.objects.filter(site=self.site)
+
+class Post(Document):
+    site = StringField(required=True)
+    name = StringField(required=True)
+    slug = StringField(required=True)
+    created = DateTimeField()
+    year = IntField()
+    month = IntField()
+    day = IntField()
+    text = StringField()
+
+    meta = {
+            'ordering': ['-created']
+            }
+
+    def __unicode__(self):
+        return self.name

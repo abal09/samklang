@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans %}Blog{% endtrans %}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a class="button success" onclick="$('#primary-form').submit()">{% trans %}Save{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+{% if g.user == g.site.domain %}
+<h1>{% trans %}Update blog settings{% endtrans %}</h1>
+<form method="POST" id="primary-form" enctype="multipart/form-data">
+
+    <label for="title">{% trans %}Blog title{% endtrans %}</label>
+    {% if not blog.title %}
+    <input type="text" name="title" id="title" placeholder="{% trans %}Blog{% endtrans %}">
+    {% else %}
+    <input type="text" name="title" id="title" value="{{ blog.title }}">
+    {% endif %}
+
+<div>
+<button type="submit" class="success">{% trans %}Save{% endtrans %}</button>
+</div>
+</form>
+
+{% endif %}
+
+{% endblock %}
+

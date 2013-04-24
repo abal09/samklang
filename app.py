@@ -5,9 +5,9 @@ from flask import Flask, render_template, request, redirect, url_for, send_from_
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
-from flask.ext.babel import Babel
+from flask.ext.babel import Babel, format_datetime, format_date, format_time
 from flask.ext.babel import gettext as _
-from models import Site, File, Page, MenuLink, Portfolio, Job, Slide
+from models import Site, File, Page, MenuLink, Portfolio, Job, Slide, Blog, Post
 
 from hashlib import sha1
 import os
@@ -18,6 +18,11 @@ app.config.from_pyfile('config.cfg', silent=True)
 db = MongoEngine(app)
 mail = Mail(app)
 babel = Babel(app)
+
+app.jinja_env.filters['datetime'] = format_datetime
+app.jinja_env.filters['date'] = format_date
+app.jinja_env.filters['time'] = format_time
+
 
 @babel.localeselector
 def get_locale():
@@ -403,6 +408,86 @@ def edit_job(slug):
         return redirect(url_for("job", slug=j.slug))
 
     return render_template("edit_job.html", job=j)
+
+@app.route("/b/")
+def blog():
+    try:
+        b = Blog.objects.get(site=g.site.domain)
+        if not b.active:
+            raise(Blog.DoesNotExist)
+    except Blog.DoesNotExist:
+        abort(404)
+    return render_template("blog.html", blog=b)
+
+@app.route("/b/e", methods=["POST", "GET"])
+def edit_blog():
+    if not g.site.domain == g.user:
+        abort(403)
+    try:
+        b = Blog.objects.get(site=g.site.domain)
+    except Blog.DoesNotExist:
+        b = Blog.objects.create(site=g.site.domain)
+
+    if request.method == "POST":
+        b.active = True
+        b.site = g.site.domain
+        b.title = request.form.get("title")
+        b.save()
+        return redirect(url_for("blog"))
+
+    return render_template("edit_blog.html", blog=b)
+
+@app.route("/b/<int:year>/<int:month>/<int:day>/<slug>")
+def post(year, month, day, slug):
+    p = Post.objects.get(site=g.site.domain, year=year, month=month, day=day, slug=slug)
+    return render_template("post.html", post=p)
+
+@app.route("/b/n", methods=["POST", "GET"])
+def new_post():
+    if not g.site.domain == g.user:
+        abort(403)
+
+    p = Post()
+    if request.method == "POST":
+        import datetime
+        p.site = g.site.domain
+        p.name = request.form.get("name")
+        p.created = datetime.datetime.utcnow()
+        p.year = p.created.year
+        p.month = p.created.month
+        p.day = p.created.day
+        slugs = [__j.slug for __j in Post.objects.filter(site=g.site.domain, year=p.year, month=p.month, day=p.day, slug=p.slug)]
+        counter = 1
+        slug = slugify(p.name)
+        __slug = slug
+        while __slug in slugs:
+            counter += 1
+            __slug = "%s_%d" % (slug, counter)
+        p.slug = __slug
+        p.text = request.form.get("text")
+        p.save()
+        return redirect(url_for("post", year=p.year, month=p.month, day=p.day, slug=p.slug))
+    return render_template("edit_post.html", post=p)
+
+@app.route("/b/<int:year>/<int:month>/<int:day>/<slug>/e", methods=["POST", "GET"])
+def edit_post(year, month, day, slug):
+    try:
+        p = Post.objects.get(site=g.site.domain, year=year, month=month, day=day, slug=slug)
+    except Post.DoesNotExist:
+        abort(404)
+
+    if not g.site.domain == g.user:
+        abort(403)
+
+    if request.method == "POST":
+        p.name = request.form.get("name")
+        #j.slug = slugify(j.name)
+        p.text = request.form.get("text")
+        p.save()
+        return redirect(url_for("post", year=p.year, month=p.month, day=p.day, slug=p.slug))
+
+    return render_template("edit_post.html", post=p)
+
 
 def slugify(value):
     """

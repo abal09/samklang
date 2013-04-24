@@ -1,0 +1,21 @@
+{% extends "normal.html" %}
+
+{% block title %}{{ post.name }}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a href="{{ url_for('edit_post', year=post.year, month=post.month, day=post.day, slug=post.slug) }}" class="button">{% trans %}Edit{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>{{ post.name }}</h1>
+<p>{{ post.created|datetime }}</p>
+
+{% if post.text %}
+<p>{{ post.text|safe }}</p>
+{% endif %}
+
+{% endblock %}
