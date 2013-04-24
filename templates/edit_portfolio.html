@@ -66,11 +66,16 @@
 
 {% endblock %}
 
+{% block js_files %}
+<script src="{{ url_for('static', filename='js/vendor/advanced.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vendor/wysihtml5-0.3.0.js') }}"></script>
+{% endblock %}
+
 {% block js %}
 <script>
 $(document).ready(function() {
-    var editor = new wysihtml5.Editor("w5-textarea", {
-        toolbar:      "w5-toolbar", // id of toolbar element
+    var editor = new wysihtml5.Editor("w5-intro", {
+        toolbar:      "intro-toolbar", // id of toolbar element
         parserRules:  wysihtml5ParserRules // defined in parser rules set 
     });
 });
