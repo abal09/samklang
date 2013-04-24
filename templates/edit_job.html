@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans %}Edit job{% endtrans %}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a class="button success" onclick="$('#primary-form').submit()">{% trans %}Save{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+{% if g.user == g.site.domain %}
+<h1>{% trans %}Job information{% endtrans %}</h1>
+<form method="POST" id="primary-form" enctype="multipart/form-data">
+
+    <label for="name">{% trans %}Job name{% endtrans %}</label>
+    <input type="text" name="name" id="name" value="{{ job.name|default("", true) }}">
+
+    <label for="intro">{% trans %}Job intro text{% endtrans %}</label>
+    <div class="button-bar" id="intro-toolbar" style="display: none;">
+        <ul class="button-group">
+            <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" class="small button secondary"><b>H1</b></a></li>
+            <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" class="small button secondary"><b>h2</b></a></li>
+            <li><a data-wysihtml5-command="bold" class="small button secondary"><b>B</b></a></li>
+            <li><a data-wysihtml5-command="createLink" class="small button secondary">{% trans %}Link{% endtrans %}</a></li>
+            <li><a data-wysihtml5-command="insertImage" class="small button secondary">{% trans %}Image{% endtrans %}</a></li>
+            <li class="button small secondary action" title="Show HTML" data-wysihtml5-action="change_view" href="javascript:;" unselectable="on">&lt;/&gt;</li>
+        </ul>
+        <div data-wysihtml5-dialog="createLink" style="display: none;" class="popup">
+            <label>Link: <input data-wysihtml5-dialog-field="href" value="http://" class="text"></label>
+            <a data-wysihtml5-dialog-action="save" class="button tiny">{% trans %}OK{% endtrans %}</a>
+            <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">{% trans %}Cancel{% endtrans %}</a>
+        </div>
+        <div data-wysihtml5-dialog="insertImage" style="display: none;" class="popup">
+            <input value="http://" data-wysihtml5-dialog-field="src" class="text">
+            Align:
+            <select data-wysihtml5-dialog-field="className" style="width: inherit">
+                <!--<option value="">default</option>-->
+                <option value="wysiwyg-float-left">left</option>
+                <option value="wysiwyg-float-right">right</option>
+            </select>
+            <br>
+            <a data-wysihtml5-dialog-action="save" class="button tiny">{% trans %}OK{% endtrans %}</a>
+            <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">{% trans %}Cancel{% endtrans %}</a>
+        </div>
+    </div>
+    <section>
+        <textarea name="intro" id="w5-intro" class="textarea-short">{{ job.intro|default("", true) }}</textarea>
+    </section>
+
+    <label for="description">{% trans %}Job description text{% endtrans %}</label>
+    <div class="button-bar" id="desc-toolbar" style="display: none;">
+        <ul class="button-group">
+            <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h1" class="small button secondary"><b>H1</b></a></li>
+            <li><a data-wysihtml5-command="formatBlock" data-wysihtml5-command-value="h2" class="small button secondary"><b>h2</b></a></li>
+            <li><a data-wysihtml5-command="bold" class="small button secondary"><b>B</b></a></li>
+            <li><a data-wysihtml5-command="createLink" class="small button secondary">{% trans %}Link{% endtrans %}</a></li>
+            <li><a data-wysihtml5-command="insertImage" class="small button secondary">{% trans %}Image{% endtrans %}</a></li>
+            <li class="button small secondary action" title="Show HTML" data-wysihtml5-action="change_view" href="javascript:;" unselectable="on">&lt;/&gt;</li>
+        </ul>
+        <div data-wysihtml5-dialog="createLink" style="display: none;" class="popup">
+            <label>Link: <input data-wysihtml5-dialog-field="href" value="http://" class="text"></label>
+            <a data-wysihtml5-dialog-action="save" class="button tiny">{% trans %}OK{% endtrans %}</a>
+            <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">{% trans %}Cancel{% endtrans %}</a>
+        </div>
+        <div data-wysihtml5-dialog="insertImage" style="display: none;" class="popup">
+            <input value="http://" data-wysihtml5-dialog-field="src" class="text">
+            Align:
+            <select data-wysihtml5-dialog-field="className" style="width: inherit">
+                <!--<option value="">default</option>-->
+                <option value="wysiwyg-float-left">left</option>
+                <option value="wysiwyg-float-right">right</option>
+            </select>
+            <br>
+            <a data-wysihtml5-dialog-action="save" class="button tiny">{% trans %}OK{% endtrans %}</a>
+            <a data-wysihtml5-dialog-action="cancel" class="button secondary tiny">{% trans %}Cancel{% endtrans %}</a>
+        </div>
+    </div>
+    <section>
+        <textarea name="description" id="w5-desc" class="textarea-long">{{ job.description|default("", true) }}</textarea>
+    </section>
+<h1>{% trans %}Slides{% endtrans %}</h1>
+{% for slide in job.slides %}
+<div>
+    <h2>{% trans number=loop.index %}Slide {{ number}}{% endtrans %}</h2>
+    <label for="image_url">Image url</label>
+    <input name="image_url" type="text" value="{{ slide.image_url|default("", true) }}">
+    <label for="text">Text if no image</label>
+    <input name="text" type="text" value="{{ slide.text|default("", true) }}">
+    <label for="caption">Caption</label>
+    <input name="caption" type="text" value="{{ slide.caption|default("", true) }}">
+    <label for="caption_link">Caption link</label>
+    <input name="caption_link" type="text" value="{{ slide.caption_link|default("", true) }}">
+</div>
+{% endfor %}
+<div>
+    <h2>{% trans %}Extra slide, fill it out if you need it{% endtrans %}</h2>
+    <label for="image_url">Image url</label>
+    <input name="image_url" type="text" placeholder="http://link.to/image-url">
+    <label for="text">Text if no image</label>
+    <input name="text" type="text" placeholder="Only needed if no image">
+    <label for="caption">Caption</label>
+    <input name="caption" type="text" placeholder="Optional image caption">
+    <label for="caption_link">Caption link</label>
+    <input name="caption_link" type="text" placeholder="http://external.project.site/">
+</div>
+
+    <button type="submit" class="success">{% trans %}Save{% endtrans %}</button>
+
+</form>
+{% endif %}
+
+{% endblock %}
+
+{% block js_files %}
+<script src="{{ url_for('static', filename='js/vendor/advanced.js') }}"></script>
+<script src="{{ url_for('static', filename='js/vendor/wysihtml5-0.3.0.js') }}"></script>
+{% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    var editor1 = new wysihtml5.Editor("w5-intro", {
+        toolbar:      "intro-toolbar", // id of toolbar element
+        parserRules:  wysihtml5ParserRules // defined in parser rules set 
+    });
+    var editor2 = new wysihtml5.Editor("w5-desc", {
+        toolbar:      "desc-toolbar", // id of toolbar element
+        parserRules:  wysihtml5ParserRules // defined in parser rules set 
+    });
+});
+</script>
+{% endblock %}

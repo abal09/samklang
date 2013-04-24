@@ -4,6 +4,12 @@
 #w5-textarea {
     height: 460px;
 }
+.textarea-intro {
+    height: 80px;
+}
+.textarea-long {
+    height: 460px;
+}
 .wysiwyg-float-right {
     float: right;
     padding: 0 0 5px 10px;

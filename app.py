@@ -7,7 +7,7 @@ from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
 from flask.ext.babel import Babel
 from flask.ext.babel import gettext as _
-from models import Site, File, Page, MenuLink
+from models import Site, File, Page, MenuLink, Portfolio, Job, Slide
 
 from hashlib import sha1
 import os
@@ -299,6 +299,107 @@ def menu():
         return redirect(url_for("menu"))
 
     return render_template("menu.html", menu_links=g.site.menu_links)
+
+# portfolio
+@app.route("/p/")
+def portfolio():
+    try:
+        p = Portfolio.objects.get(site=g.site.domain)
+        if not p.active:
+            raise(Portfolio.DoesNotExist)
+    except Portfolio.DoesNotExist:
+        abort(404)
+    return render_template("portfolio.html", portfolio=p)
+
+@app.route("/p/e", methods=["POST", "GET"])
+def edit_portfolio():
+    if not g.site.domain == g.user:
+        abort(403)
+    try:
+        p = Portfolio.objects.get(site=g.site.domain)
+    except Portfolio.DoesNotExist:
+        p = Portfolio.objects.create(site=g.site.domain)
+
+    if request.method == "POST":
+        p.active = True
+        p.site = g.site.domain
+        p.title = request.form.get("title")
+        p.intro = request.form.get("intro")
+        p.save()
+        return redirect(url_for("portfolio"))
+
+    return render_template("edit_portfolio.html", portfolio=p)
+
+@app.route("/p/<slug>")
+def job(slug):
+    try:
+        j = Job.objects.get(site=g.site.domain, slug=slug)
+    except Job.DoesNotExist:
+        abort(404)
+    return render_template("job.html", job=j)
+
+@app.route("/p/n", methods=["POST", "GET"])
+def new_job():
+    if not g.site.domain == g.user:
+        abort(403)
+
+    j = Job()
+    if request.method == "POST":
+        portfolio = Portfolio.objects.get(site=g.site.domain)
+        job_name = request.form.get("name")
+        slugs = [__j.slug for __j in Job.objects.filter(site=g.site.domain)]
+        counter = 1
+        slug = slugify(job_name)
+        __slug = slug
+        while __slug in slugs:
+            counter += 1
+            __slug = "%s_%d" % (slug, counter)
+        j.slug = __slug
+        j.name = job_name
+        j.site = g.site.domain
+        j.intro = request.form.get("intro")
+        j.description = request.form.get("description")
+        j.slides = []
+        texts = request.form.getlist("text")
+        image_urls = request.form.getlist("image_url")
+        captions = request.form.getlist("caption")
+        caption_links = request.form.getlist("caption_link")
+        for text, image_url, caption, caption_link in zip(texts, image_urls, captions, caption_links):
+            if text or image_url:
+                j.slides.append(Slide(text=text, image_url=image_url, caption=caption, caption_link=caption_link))
+        j.save()
+        portfolio.jobs.append(j)
+        portfolio.save()
+        return redirect(url_for("job", slug=j.slug))
+    return render_template("edit_job.html", job=j)
+
+@app.route("/p/<slug>/e", methods=["POST", "GET"])
+def edit_job(slug):
+    try:
+        j = Job.objects.get(site=g.site.domain, slug=slug)
+    except Job.DoesNotExist:
+        abort(404)
+
+    if not g.site.domain == g.user:
+        abort(403)
+
+    if request.method == "POST":
+        j.name = request.form.get("name")
+        #j.slug = slugify(j.name)
+        j.intro = request.form.get("intro")
+        j.description = request.form.get("description")
+        j.slides = []
+        texts = request.form.getlist("text")
+        image_urls = request.form.getlist("image_url")
+        captions = request.form.getlist("caption")
+        caption_links = request.form.getlist("caption_link")
+        for text, image_url, caption, caption_link in zip(texts, image_urls, captions, caption_links):
+            if text or image_url:
+                j.slides.append(Slide(text=text, image_url=image_url, caption=caption, caption_link=caption_link))
+        j.save()
+        return redirect(url_for("job", slug=j.slug))
+
+    return render_template("edit_job.html", job=j)
 
 def slugify(value):
     """

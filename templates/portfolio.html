@@ -1,0 +1,39 @@
+{% extends "normal.html" %}
+
+{% block title %}{{ portfolio.title }}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a href="{{ url_for('edit_portfolio') }}" class="button">{% trans %}Edit{% endtrans %}</a>
+</li>
+<li class="has-form">
+<a href="{{ url_for('new_job') }}" class="button">{% trans %}Add job{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>{{ portfolio.title }}</h1>
+
+{% if portfolio.intro %}
+<p>{{ portfolio.intro|safe }}</p>
+{% endif %}
+
+<div class="row">
+{% for job in portfolio.all_jobs %}
+<a class="small-4 columns" href="{{ url_for('job', slug=job.slug) }}">
+{% if job.slides %}
+{% set slide = job.slides|first %}
+{% if slide.image_url %}
+<img src="{{ slide.image_url }}" alt="">
+{% else %}
+<div><p>{{ slide.description }}</p></div>
+{% endif %}
+{% endif %}
+<h4>{{ job.name }}</h4>
+</a>
+
+{% endfor %}
+</div>
+{% endblock %}

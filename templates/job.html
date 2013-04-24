@@ -1,0 +1,62 @@
+{% extends "normal.html" %}
+
+{% block title %}{% trans %}Portfolio{% endtrans %}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a href="{{ url_for('edit_job', slug=job.slug) }}" class="button">{% trans %}Edit{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>{{ job.name }}</h1>
+{% if job.intro %}
+<p>{{ job.intro|safe }}</p>
+{% endif %}
+
+{% if job.slides %}
+{% if job.slides|length == 1 %}
+<div class="orbit-container">
+<ul class="orbit-slides-container">
+    <li>
+{% set slide = job.slides|first %}
+{% if slide.image_url %}
+<img src="{{ slide.image_url }}" alt="">
+{% endif %}
+{% if slide.caption %}
+{% if slide.caption_link %}
+<div class="orbit-caption"><a href="{{ slide.caption_link }}">{{ slide.caption }}</a></div>
+{% else %}
+<div class="orbit-caption">{{ slide.caption }}</div>
+{% endif %}
+{% endif %}
+</li>
+</ul>
+</div>
+{% else %}
+<ul data-orbit data-options="timer_speed: 0; bullets: false">
+    {% for slide in job.slides %}
+  <li>
+    {% if slide.image_url %}
+<img src="{{ slide.image_url }}" alt="">
+{% endif %}
+{% if slide.caption %}
+{% if slide.caption_link %}
+<div class="orbit-caption"><a href="{{ slide.caption_link }}">{{ slide.caption }}</a></div>
+{% else %}
+<div class="orbit-caption">{{ slide.caption }}</div>
+{% endif %}
+{% endif %}
+  </li>
+  {% endfor %}
+</ul>
+{% endif %}
+{% endif %}
+
+{% if job.description %}
+<p>{{ job.description|safe }}</p>
+{% endif %}
+
+{% endblock %}

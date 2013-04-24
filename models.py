@@ -1,6 +1,7 @@
 from mongoengine import Document, EmbeddedDocument
 from mongoengine import StringField, DateTimeField, IntField, BooleanField
 from mongoengine import ListField, EmbeddedDocumentField
+from flask.ext.babel import gettext as _
 import datetime
 
 class MenuLink(EmbeddedDocument):
@@ -60,3 +61,41 @@ class Page(Document):
 
     def __unicode__(self):
         return self.name
+
+class Slide(EmbeddedDocument):
+    text = StringField()
+    image_url = StringField()
+    caption = StringField()
+    caption_link = StringField()
+
+class Job(Document):
+    site = StringField(required=True)
+    name = StringField(required=True)
+    slug = StringField(required=True)
+    intro = StringField()
+    description = StringField()
+    slides = ListField(EmbeddedDocumentField(Slide))
+    created = DateTimeField(default=datetime.datetime.now)
+
+    meta = {
+            'ordering': ['-created']
+            }
+
+    def __unicode__(self):
+        return self.name
+
+class Portfolio(Document):
+    site = StringField(required=True)
+    active = BooleanField(default=False)
+    title = StringField()
+    intro = StringField()
+
+    def __unicode__(self):
+        if self.title:
+            return self.title
+        else:
+            return _("Portfolio")
+
+    @property
+    def all_jobs(self):
+        return Job.objects.filter(site=self.site)
