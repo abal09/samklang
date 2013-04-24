@@ -126,6 +126,7 @@ class Post(Document):
     month = IntField()
     day = IntField()
     text = StringField()
+    image_slug = StringField()
 
     meta = {
             'ordering': ['-created']

@@ -18,6 +18,12 @@
     <label for="name">{% trans %}Post name{% endtrans %}</label>
     <input type="text" name="name" id="name" value="{{ post.name|default("", true) }}">
 
+    <label for="file">{% trans %}Image{% endtrans %}</label>
+    <input type="file" name="file" id="showcase-image">
+    {% if post.image_slug %}
+    <img src="{{ url_for('media', filename=post.image_slug) }}">
+    {% endif %}
+
     <label for="text">{% trans %}Post content{% endtrans %}</label>
     <div class="button-bar" id="text-toolbar" style="display: none;">
         <ul class="button-group">

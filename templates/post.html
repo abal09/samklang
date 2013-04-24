@@ -12,6 +12,11 @@
 
 {% block content %}
 <h1>{{ post.name }}</h1>
+
+{% if post.image_slug %}
+<img src="{{ url_for('media', filename=post.image_slug) }}">
+{% endif %}
+
 <p>{{ post.created|datetime }}</p>
 
 {% if post.text %}

@@ -449,6 +449,16 @@ def new_post():
 
     p = Post()
     if request.method == "POST":
+        reqfile = request.files.get('file')
+        if reqfile:
+            f = File()
+            f.site = g.site.domain
+            f.name = reqfile.filename
+            f.slug = secure_filename(f.name)
+            f.content_type = reqfile.mimetype
+            f.slug, f.content_length = save_file(reqfile)
+            f.save()
+
         import datetime
         p.site = g.site.domain
         p.name = request.form.get("name")
@@ -465,6 +475,8 @@ def new_post():
             __slug = "%s_%d" % (slug, counter)
         p.slug = __slug
         p.text = request.form.get("text")
+        if reqfile:
+            p.image_slug = f.slug
         p.save()
         return redirect(url_for("post", year=p.year, month=p.month, day=p.day, slug=p.slug))
     return render_template("edit_post.html", post=p)
@@ -480,9 +492,21 @@ def edit_post(year, month, day, slug):
         abort(403)
 
     if request.method == "POST":
+        reqfile = request.files.get('file')
+        if reqfile:
+            f = File()
+            f.site = g.site.domain
+            f.name = reqfile.filename
+            f.slug = secure_filename(f.name)
+            f.content_type = reqfile.mimetype
+            f.slug, f.content_length = save_file(reqfile)
+            f.save()
+
         p.name = request.form.get("name")
         #j.slug = slugify(j.name)
         p.text = request.form.get("text")
+        if reqfile:
+            p.image_slug = f.slug
         p.save()
         return redirect(url_for("post", year=p.year, month=p.month, day=p.day, slug=p.slug))
 

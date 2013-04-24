@@ -18,7 +18,10 @@
 
 {% for post in blog.all_posts %}
 <div>
-<h2>{{ post.name }}</h2>
+    <h2><a href="{{ url_for('post', year=post.year, month=post.month, day=post.day, slug=post.slug) }}">{{ post.name }}</a></h2>
+{% if post.image_slug %}
+<img src="{{ url_for('media', filename=post.image_slug) }}">
+{% endif %}
 <p>{{ post.created|date }}</p>
 {{ post.text|safe }}
 </div>
