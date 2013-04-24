@@ -22,6 +22,9 @@
     <input type="text" name="title" id="title" value="{{ portfolio.title }}">
     {% endif %}
 
+    <label for="categories">{% trans %}Portfolio categories{% endtrans %}</label>
+    <input type="text" name="categories" id="categories" value="{{ ", ".join(portfolio.categories) }}">
+
     <label for="intro">{% trans %}Portfolio intro text{% endtrans %}</label>
     <div class="button-bar" id="intro-toolbar" style="display: none;">
         <ul class="button-group">

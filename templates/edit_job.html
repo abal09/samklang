@@ -18,6 +18,9 @@
     <label for="name">{% trans %}Job name{% endtrans %}</label>
     <input type="text" name="name" id="name" value="{{ job.name|default("", true) }}">
 
+    <label for="categories">{% trans %}Categories{% endtrans %}</label>
+    <input type="text" name="categories" id="categories" value="{{ ", ".join(job.categories) }}">
+
     <label for="intro">{% trans %}Job intro text{% endtrans %}</label>
     <div class="button-bar" id="intro-toolbar" style="display: none;">
         <ul class="button-group">

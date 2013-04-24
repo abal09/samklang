@@ -12,6 +12,15 @@
 
 {% block content %}
 <h1>{{ job.name }}</h1>
+
+{% if job.categories %}
+<p style="float: right">
+{% for category in job.categories %}
+<a href="">{{ category }}</a>
+{% endfor %}
+</p>
+{% endif %}
+
 {% if job.intro %}
 <p>{{ job.intro|safe }}</p>
 {% endif %}

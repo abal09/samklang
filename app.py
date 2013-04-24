@@ -325,6 +325,7 @@ def edit_portfolio():
         p.site = g.site.domain
         p.title = request.form.get("title")
         p.intro = request.form.get("intro")
+        p.categories = [ c.strip() for c in request.form.get("categories").split(",") ]
         p.save()
         return redirect(url_for("portfolio"))
 
@@ -357,6 +358,7 @@ def new_job():
         j.slug = __slug
         j.name = job_name
         j.site = g.site.domain
+        j.categories = [ c.strip() for c in request.form.get("categories").split(",") ]
         j.intro = request.form.get("intro")
         j.description = request.form.get("description")
         j.slides = []
@@ -386,6 +388,7 @@ def edit_job(slug):
     if request.method == "POST":
         j.name = request.form.get("name")
         #j.slug = slugify(j.name)
+        j.categories = [ c.strip() for c in request.form.get("categories").split(",") ]
         j.intro = request.form.get("intro")
         j.description = request.form.get("description")
         j.slides = []

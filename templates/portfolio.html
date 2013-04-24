@@ -14,6 +14,15 @@
 {% endblock %}
 
 {% block content %}
+{% if portfolio.categories %}
+<p style="float: right">
+<a href="" class="filterAll">{% trans %}All{% endtrans %}
+{% for category in portfolio.categories %}
+<a href="" class="filter">{{ category }}</a>
+{% endfor %}
+</p>
+{% endif %}
+
 <h1>{{ portfolio.title }}</h1>
 
 {% if portfolio.intro %}
@@ -22,7 +31,7 @@
 
 <div class="row">
 {% for job in portfolio.all_jobs %}
-<a class="small-4 columns" href="{{ url_for('job', slug=job.slug) }}">
+<a class="small-4 columns job" href="{{ url_for('job', slug=job.slug) }}">
 {% if job.slides %}
 {% set slide = job.slides|first %}
 {% if slide.image_url %}
@@ -32,8 +41,52 @@
 {% endif %}
 {% endif %}
 <h4>{{ job.name }}</h4>
+<p class="categories">
+{% for category in job.categories %}
+<span>{{ category }}</span>
+{% endfor %}
+</p>
 </a>
 
 {% endfor %}
 </div>
 {% endblock %}
+
+{% block js %}
+<script>
+$(document).ready(function() {
+    $('.filter').click(function(e) {
+        e.preventDefault();
+        var category = $(this).text().toLowerCase();
+        $('a.job .categories').each(function() {
+            var found = false;
+            $(this).find('span').each(function() {
+                if ($(this).text().toLowerCase() == category) {
+                found = true;
+                }
+
+            });
+            var job = $(this).parent();
+            if (found) {
+                if (!$(job).is(":visible")) {
+                    $(this).parent().show('slow');
+                }
+            } else {
+                if ($(job).is(":visible")) {
+                    $(this).parent().hide('slow');
+                }
+            }
+        });
+    });
+    $('.filterAll').click(function(e) {
+        e.preventDefault();
+        $('a.job .categories').each(function() {
+            var job = $(this).parent();
+            if (!$(job).is(":visible")) {
+                $(this).parent().show('slow');
+            }
+        });
+    });
+});
+</script>
+{% endblock js %}

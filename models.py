@@ -75,6 +75,7 @@ class Job(Document):
     intro = StringField()
     description = StringField()
     slides = ListField(EmbeddedDocumentField(Slide))
+    categories = ListField(StringField())
     created = DateTimeField(default=datetime.datetime.now)
 
     meta = {
@@ -89,6 +90,7 @@ class Portfolio(Document):
     active = BooleanField(default=False)
     title = StringField()
     intro = StringField()
+    categories = ListField(StringField())
 
     def __unicode__(self):
         if self.title:
