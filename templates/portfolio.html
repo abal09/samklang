@@ -5,10 +5,10 @@
 {% block context_menu %}
 {% if g.site.domain == g.user %}
 <li class="has-form">
-<a href="{{ url_for('edit_portfolio') }}" class="button">{% trans %}Edit{% endtrans %}</a>
+<a href="{{ url_for('.edit_portfolio') }}" class="button">{% trans %}Edit{% endtrans %}</a>
 </li>
 <li class="has-form">
-<a href="{{ url_for('new_job') }}" class="button">{% trans %}Add job{% endtrans %}</a>
+<a href="{{ url_for('.new_job') }}" class="button">{% trans %}Add job{% endtrans %}</a>
 </li>
 {% endif %}
 {% endblock %}
@@ -31,7 +31,7 @@
 
 <div class="row">
 {% for job in portfolio.all_jobs %}
-<a class="small-4 columns job" href="{{ url_for('job', slug=job.slug) }}">
+<a class="small-4 columns job" href="{{ url_for('.job', slug=job.slug) }}">
 {% if job.slides %}
 {% set slide = job.slides|first %}
 {% if slide.image_url %}

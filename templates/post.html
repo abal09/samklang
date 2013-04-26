@@ -5,7 +5,7 @@
 {% block context_menu %}
 {% if g.site.domain == g.user %}
 <li class="has-form">
-<a href="{{ url_for('edit_post', year=post.year, month=post.month, day=post.day, slug=post.slug) }}" class="button">{% trans %}Edit{% endtrans %}</a>
+<a href="{{ url_for('.edit_post', year=post.year, month=post.month, day=post.day, slug=post.slug) }}" class="button">{% trans %}Edit{% endtrans %}</a>
 </li>
 {% endif %}
 {% endblock %}

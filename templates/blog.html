@@ -5,10 +5,10 @@
 {% block context_menu %}
 {% if g.site.domain == g.user %}
 <li class="has-form">
-<a href="{{ url_for('edit_blog') }}" class="button">{% trans %}Edit{% endtrans %}</a>
+<a href="{{ url_for('.edit_blog') }}" class="button">{% trans %}Edit{% endtrans %}</a>
 </li>
 <li class="has-form">
-<a href="{{ url_for('new_post') }}" class="button">{% trans %}Add update{% endtrans %}</a>
+<a href="{{ url_for('.new_post') }}" class="button">{% trans %}Add update{% endtrans %}</a>
 </li>
 {% endif %}
 {% endblock %}
@@ -18,7 +18,7 @@
 
 {% for post in blog.all_posts %}
 <div>
-    <h2><a href="{{ url_for('post', year=post.year, month=post.month, day=post.day, slug=post.slug) }}">{{ post.name }}</a></h2>
+    <h2><a href="{{ url_for('.post', year=post.year, month=post.month, day=post.day, slug=post.slug) }}">{{ post.name }}</a></h2>
 {% if post.image_slug %}
 <img src="{{ url_for('media', filename=post.image_slug) }}">
 {% endif %}

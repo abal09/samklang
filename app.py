@@ -1,18 +1,22 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, safe_join, session, g, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, session, g, flash, abort
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
 from flask.ext.babel import Babel, format_datetime, format_date, format_time
 from flask.ext.babel import gettext as _
-from models import Site, File, Page, MenuLink, Portfolio, Job, Slide, Blog, Post
+from models import Site, File, Page, MenuLink
+from utils import save_file, slugify
+from blog import blog
+from portfolio import portfolio
 
 from hashlib import sha1
-import os
 
 app = Flask(__name__, instance_relative_config=True)
+app.register_blueprint(blog)
+app.register_blueprint(portfolio)
 app.config.from_object('config')
 app.config.from_pyfile('config.cfg', silent=True)
 db = MongoEngine(app)
@@ -224,7 +228,7 @@ def edit():
     site = g.site
     if request.method == "POST" and g.site.domain == g.user:
         if request.files["header_image"]:
-            site.header_image, length = save_file(request.files["header_image"])
+            site.header_image, length = save_file(request.files["header_image"], app.config["UPLOAD_FOLDER"])
         site.footers = []
         footers = request.form.getlist("footer")
         for footer in footers:
@@ -252,28 +256,6 @@ def files_delete(id):
         return jsonify(status=True)
     else:
         return jsonify(status=False)
-
-def githash(data):
-    length = len(data)
-    hsh = sha1()
-    hsh.update("blob %u\0" % length)
-    hsh.update(data)
-    return hsh.hexdigest(), length
-
-def save_file(reqfile):
-    reqfile_path = safe_join(app.config['UPLOAD_FOLDER'], secure_filename(reqfile.filename))
-    reqfile.save(reqfile_path)
-    with file(reqfile_path) as __f:
-        ghash, length = githash(__f.read())
-    new_dir = safe_join(app.config['UPLOAD_FOLDER'], ghash[0:2])
-    new_filename = ghash[2:40]
-    new_path = safe_join(new_dir, new_filename)
-    try:
-        os.makedirs(new_dir)
-    except OSError:
-        pass  # dir already exists: OK
-    os.rename(reqfile_path, new_path)
-    return safe_join(ghash[0:2], ghash[2:40]), length
 
 @app.route("/files/", methods=["POST", "GET"])
 def files():
@@ -304,229 +286,6 @@ def menu():
         return redirect(url_for("menu"))
 
     return render_template("menu.html", menu_links=g.site.menu_links)
-
-# portfolio
-@app.route("/p/")
-def portfolio():
-    try:
-        p = Portfolio.objects.get(site=g.site.domain)
-        if not p.active:
-            raise(Portfolio.DoesNotExist)
-    except Portfolio.DoesNotExist:
-        abort(404)
-    return render_template("portfolio.html", portfolio=p)
-
-@app.route("/p/e", methods=["POST", "GET"])
-def edit_portfolio():
-    if not g.site.domain == g.user:
-        abort(403)
-    try:
-        p = Portfolio.objects.get(site=g.site.domain)
-    except Portfolio.DoesNotExist:
-        p = Portfolio.objects.create(site=g.site.domain)
-
-    if request.method == "POST":
-        p.active = True
-        p.site = g.site.domain
-        p.title = request.form.get("title")
-        p.intro = request.form.get("intro")
-        p.categories = [ c.strip() for c in request.form.get("categories").split(",") ]
-        p.save()
-        return redirect(url_for("portfolio"))
-
-    return render_template("edit_portfolio.html", portfolio=p)
-
-@app.route("/p/<slug>")
-def job(slug):
-    try:
-        j = Job.objects.get(site=g.site.domain, slug=slug)
-    except Job.DoesNotExist:
-        abort(404)
-    return render_template("job.html", job=j)
-
-@app.route("/p/n", methods=["POST", "GET"])
-def new_job():
-    if not g.site.domain == g.user:
-        abort(403)
-
-    j = Job()
-    if request.method == "POST":
-        portfolio = Portfolio.objects.get(site=g.site.domain)
-        job_name = request.form.get("name")
-        slugs = [__j.slug for __j in Job.objects.filter(site=g.site.domain)]
-        counter = 1
-        slug = slugify(job_name)
-        __slug = slug
-        while __slug in slugs:
-            counter += 1
-            __slug = "%s_%d" % (slug, counter)
-        j.slug = __slug
-        j.name = job_name
-        j.site = g.site.domain
-        j.categories = [ c.strip() for c in request.form.get("categories").split(",") ]
-        j.intro = request.form.get("intro")
-        j.description = request.form.get("description")
-        j.slides = []
-        texts = request.form.getlist("text")
-        image_urls = request.form.getlist("image_url")
-        captions = request.form.getlist("caption")
-        caption_links = request.form.getlist("caption_link")
-        for text, image_url, caption, caption_link in zip(texts, image_urls, captions, caption_links):
-            if text or image_url:
-                j.slides.append(Slide(text=text, image_url=image_url, caption=caption, caption_link=caption_link))
-        j.save()
-        portfolio.jobs.append(j)
-        portfolio.save()
-        return redirect(url_for("job", slug=j.slug))
-    return render_template("edit_job.html", job=j)
-
-@app.route("/p/<slug>/e", methods=["POST", "GET"])
-def edit_job(slug):
-    try:
-        j = Job.objects.get(site=g.site.domain, slug=slug)
-    except Job.DoesNotExist:
-        abort(404)
-
-    if not g.site.domain == g.user:
-        abort(403)
-
-    if request.method == "POST":
-        j.name = request.form.get("name")
-        #j.slug = slugify(j.name)
-        j.categories = [ c.strip() for c in request.form.get("categories").split(",") ]
-        j.intro = request.form.get("intro")
-        j.description = request.form.get("description")
-        j.slides = []
-        texts = request.form.getlist("text")
-        image_urls = request.form.getlist("image_url")
-        captions = request.form.getlist("caption")
-        caption_links = request.form.getlist("caption_link")
-        for text, image_url, caption, caption_link in zip(texts, image_urls, captions, caption_links):
-            if text or image_url:
-                j.slides.append(Slide(text=text, image_url=image_url, caption=caption, caption_link=caption_link))
-        j.save()
-        return redirect(url_for("job", slug=j.slug))
-
-    return render_template("edit_job.html", job=j)
-
-@app.route("/b/")
-def blog():
-    try:
-        b = Blog.objects.get(site=g.site.domain)
-        if not b.active:
-            raise(Blog.DoesNotExist)
-    except Blog.DoesNotExist:
-        abort(404)
-    return render_template("blog.html", blog=b)
-
-@app.route("/b/e", methods=["POST", "GET"])
-def edit_blog():
-    if not g.site.domain == g.user:
-        abort(403)
-    try:
-        b = Blog.objects.get(site=g.site.domain)
-    except Blog.DoesNotExist:
-        b = Blog.objects.create(site=g.site.domain)
-
-    if request.method == "POST":
-        b.active = True
-        b.site = g.site.domain
-        b.title = request.form.get("title")
-        b.save()
-        return redirect(url_for("blog"))
-
-    return render_template("edit_blog.html", blog=b)
-
-@app.route("/b/<int:year>/<int:month>/<int:day>/<slug>")
-def post(year, month, day, slug):
-    p = Post.objects.get(site=g.site.domain, year=year, month=month, day=day, slug=slug)
-    return render_template("post.html", post=p)
-
-@app.route("/b/n", methods=["POST", "GET"])
-def new_post():
-    if not g.site.domain == g.user:
-        abort(403)
-
-    p = Post()
-    if request.method == "POST":
-        reqfile = request.files.get('file')
-        if reqfile:
-            f = File()
-            f.site = g.site.domain
-            f.name = reqfile.filename
-            f.slug = secure_filename(f.name)
-            f.content_type = reqfile.mimetype
-            f.slug, f.content_length = save_file(reqfile)
-            f.save()
-
-        import datetime
-        p.site = g.site.domain
-        p.name = request.form.get("name")
-        p.created = datetime.datetime.utcnow()
-        p.year = p.created.year
-        p.month = p.created.month
-        p.day = p.created.day
-        slugs = [__j.slug for __j in Post.objects.filter(site=g.site.domain, year=p.year, month=p.month, day=p.day, slug=p.slug)]
-        counter = 1
-        slug = slugify(p.name)
-        __slug = slug
-        while __slug in slugs:
-            counter += 1
-            __slug = "%s_%d" % (slug, counter)
-        p.slug = __slug
-        p.text = request.form.get("text")
-        if reqfile:
-            p.image_slug = f.slug
-        p.save()
-        return redirect(url_for("post", year=p.year, month=p.month, day=p.day, slug=p.slug))
-    return render_template("edit_post.html", post=p)
-
-@app.route("/b/<int:year>/<int:month>/<int:day>/<slug>/e", methods=["POST", "GET"])
-def edit_post(year, month, day, slug):
-    try:
-        p = Post.objects.get(site=g.site.domain, year=year, month=month, day=day, slug=slug)
-    except Post.DoesNotExist:
-        abort(404)
-
-    if not g.site.domain == g.user:
-        abort(403)
-
-    if request.method == "POST":
-        reqfile = request.files.get('file')
-        if reqfile:
-            f = File()
-            f.site = g.site.domain
-            f.name = reqfile.filename
-            f.slug = secure_filename(f.name)
-            f.content_type = reqfile.mimetype
-            f.slug, f.content_length = save_file(reqfile)
-            f.save()
-
-        p.name = request.form.get("name")
-        #j.slug = slugify(j.name)
-        p.text = request.form.get("text")
-        if reqfile:
-            p.image_slug = f.slug
-        p.save()
-        return redirect(url_for("post", year=p.year, month=p.month, day=p.day, slug=p.slug))
-
-    return render_template("edit_post.html", post=p)
-
-
-def slugify(value):
-    """
-    Normalizes a string using unidecode library. Lowercase it, remove
-    punctuation and replace spacing with hyphens.
-
-    >>> slugify(u'Blåbærsyltetøy')
-    'Blabaersyltetoy'
-    """
-    from unidecode import unidecode
-    import re
-
-    value = unidecode(value)
-    value = re.sub('[^\w\s-]', '', value).strip().lower()
-    return unicode(re.sub('[-\s]+', '-', value))
 
 @app.route("/pages/", methods=["POST", "GET"])
 def pages():

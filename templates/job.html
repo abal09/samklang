@@ -5,7 +5,7 @@
 {% block context_menu %}
 {% if g.site.domain == g.user %}
 <li class="has-form">
-<a href="{{ url_for('edit_job', slug=job.slug) }}" class="button">{% trans %}Edit{% endtrans %}</a>
+<a href="{{ url_for('.edit_job', slug=job.slug) }}" class="button">{% trans %}Edit{% endtrans %}</a>
 </li>
 {% endif %}
 {% endblock %}
