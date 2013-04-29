@@ -28,7 +28,7 @@
 <nav class="top-bar">
     <ul class="title-area">
         <li class="name">
-        <h1><a href="/">{% trans %}Admin{% endtrans %}</a></h1>
+        <h1><a href="/a/m/">{% trans %}Admin{% endtrans %}</a></h1>
         </li>
         <li class="toggle-topbar menu-icon"><a href="#"><span></span></a></li>
     </ul>
@@ -36,7 +36,15 @@
         <ul class="left">
             <li><a href="/files/">{% trans %}Files{% endtrans %}</a></li>
             <li><a href="/pages/">{% trans %}Pages{% endtrans %}</a></li>
+            {% if "menu" in g.site.active_modules %}
             <li><a href="/menu/">{% trans %}Menu{% endtrans %}</a></li>
+            {% endif %}
+            {% if "blog" in g.site.active_modules %}
+            <li><a href="/b/">{% trans %}Blog{% endtrans %}</a></li>
+            {% endif %}
+            {% if "portfolio" in g.site.active_modules %}
+            <li><a href="/p/">{% trans %}Portfolio{% endtrans %}</a></li>
+            {% endif %}
         </ul>
         <ul class="right">
             {% block context_menu %}{% endblock %}

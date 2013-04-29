@@ -16,6 +16,7 @@ class Site(Document):
     description = StringField()
     header_image = StringField()
     footers = ListField(StringField())
+    active_modules = ListField(StringField())
     menu_links = ListField(EmbeddedDocumentField(MenuLink))
     created = DateTimeField(default=datetime.datetime.now)
 

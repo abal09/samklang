@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}{% trans %}Module settings{% endtrans %}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a class="button success" onclick="$('#primary-form').submit()">{% trans %}Save{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block main %}
+{% if g.user == g.site.domain %}
+<h1>{% trans %}Module settings{% endtrans %}</h1>
+<form method="POST" id="primary-form" enctype="multipart/form-data">
+
+<h2>{% trans %}Available modules{% endtrans %}</h2>
+
+<h3>{% trans %}Menu{% endtrans %}</h3>
+
+<label for="menu_active">{% trans %}Active{% endtrans %}</label>
+{% if "menu" in g.site.active_modules %}
+<input type="checkbox" name="menu_active" checked="checked" />
+{% else %}
+<input type="checkbox" name="menu_active" />
+{% endif %}
+
+<h3>{% trans %}Blog{% endtrans %}</h3>
+
+<label for="blog_active">{% trans %}Active{% endtrans %}</label>
+{% if "blog" in g.site.active_modules %}
+<input type="checkbox" name="blog_active" checked="checked" />
+{% else %}
+<input type="checkbox" name="blog_active" />
+{% endif %}
+
+<h3>{% trans %}Portfolio{% endtrans %}</h3>
+
+<label for="portfolio_active">{% trans %}Active{% endtrans %}</label>
+{% if "portfolio" in g.site.active_modules %}
+<input type="checkbox" name="portfolio_active" checked="checked" />
+{% else %}
+<input type="checkbox" name="portfolio_active" />
+{% endif %}
+
+
+<div>
+<button type="submit" class="success">{% trans %}Save{% endtrans %}</button>
+</div>
+</form>
+{% else %}
+<h1>{% trans %}Available modules{% endtrans %}</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>Module</th>
+        <th>Active</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for module_name, module_object in modules %}
+    <tr>
+        <td>{{ module_name }}</td>
+        <td>
+            {% if module_object and module_object.active %}
+            {% trans %}Active{% endtrans %}
+            {% else %}
+            {% trans %}Not active{% endtrans %}
+            {% endif %}
+        </td>
+    </tr>
+    </tbody>
+    {% endfor %}
+</table>
+
+{% endif %}
+
+{% endblock %}
+

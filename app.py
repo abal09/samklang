@@ -289,6 +289,28 @@ def menu():
 
     return render_template("menu.html", menu_links=g.site.menu_links)
 
+@app.route("/a/m/", methods=["POST", "GET"])
+def modules():
+    available_modules = ["menu", "blog", "portfolio"]
+
+    if request.method == "POST" and g.user == g.site.domain:
+        site_changed = False
+        for module in available_modules:
+            module_active = request.form.get("%s_active" % module)
+            if module_active:
+                if not module in g.site.active_modules:
+                    g.site.active_modules.append(module)
+                    site_changed = True
+            else:
+                if module in g.site.active_modules:
+                    g.site.active_modules.remove(module)
+                    site_changed = True
+        if site_changed:
+            g.site.save()
+
+        return redirect(url_for("modules"))
+
+    return render_template("modules.html", modules=available_modules)
 
 if __name__ == "__main__":
     app.run()
