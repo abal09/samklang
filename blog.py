@@ -7,9 +7,9 @@ blog = Blueprint('blog', __name__, template_folder='templates/blog', url_prefix=
 @blog.route("/")
 def show_blog():
     try:
-        b = Blog.objects.get(site=g.site.domain)
-        if not b.active:
+        if not "blog" in g.site.active_modules:
             raise(Blog.DoesNotExist)
+        b = Blog.objects.get(site=g.site.domain)
     except Blog.DoesNotExist:
         abort(404)
     return render_template("blog.html", blog=b)
@@ -24,8 +24,6 @@ def edit_blog():
         b = Blog.objects.create(site=g.site.domain)
 
     if request.method == "POST":
-        b.active = True
-        b.site = g.site.domain
         b.title = request.form.get("title")
         b.save()
         return redirect(url_for(".show_blog"))

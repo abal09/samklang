@@ -7,6 +7,7 @@
 </div>
 {% endif %}
 
+{% if "menu" in g.site.active_modules %}
 <nav class="top-bar" id="site-top-bar">
     <ul class="title-area">
         <li class="name">
@@ -23,6 +24,8 @@
         </ul>
     </section>
 </nav>
+{% endif %}
+
 {% block content %}
 {% endblock %}
 {% if "username" not in session %}

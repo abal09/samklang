@@ -7,9 +7,9 @@ portfolio = Blueprint('portfolio', __name__, template_folder='templates/portfoli
 @portfolio.route("/")
 def show_portfolio():
     try:
-        p = Portfolio.objects.get(site=g.site.domain)
-        if not p.active:
+        if not "portfolio" in g.site.active_modules:
             raise(Portfolio.DoesNotExist)
+        p = Portfolio.objects.get(site=g.site.domain)
     except Portfolio.DoesNotExist:
         abort(404)
     return render_template("portfolio.html", portfolio=p)
@@ -24,8 +24,6 @@ def edit_portfolio():
         p = Portfolio.objects.create(site=g.site.domain)
 
     if request.method == "POST":
-        p.active = True
-        p.site = g.site.domain
         p.title = request.form.get("title")
         p.intro = request.form.get("intro")
         p.categories = [ c.strip() for c in request.form.get("categories").split(",") ]
