@@ -285,7 +285,7 @@ def menu():
                 if text and link:
                     g.site.menu_links.append(MenuLink(text=text, link=link))
             g.site.save()
-        return redirect(url_for("menu"))
+        return redirect(url_for("index"))
 
     return render_template("menu.html", menu_links=g.site.menu_links)
 

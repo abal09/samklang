@@ -2,10 +2,18 @@
 
 {% block title %}{% trans %}Site menu{% endtrans %}{% endblock %}
 
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a class="button success" onclick="$('#primary-form').submit()">{% trans %}Save{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
 {% block main %}
 <h1>{% trans %}Site menu{% endtrans %}</h1>
 <p>{% trans %}Here you control the contents of your menu. Rows with empty values will not get saved.{% endtrans %}</p>
-<form method="POST">
+<form method="POST" id="primary-form">
 {% for menu_link in menu_links %}
 <div class="row">
     <div class="small-12 columns">
@@ -36,7 +44,7 @@
 </div>
 <div class="row">
     <div class="small-12 columns">
-        <button type="submit">{% trans %}Save{% endtrans %}</button>
+        <button type="submit" class="success">{% trans %}Save{% endtrans %}</button>
     </div>
 </div>
 </form>
