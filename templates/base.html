@@ -36,9 +36,11 @@
         <ul class="left">
             <li><a href="/a/m/">{% trans %}Modules{% endtrans %}</a></li>
             <li><a href="/files/">{% trans %}Files{% endtrans %}</a></li>
-            <li><a href="/pages/">{% trans %}Pages{% endtrans %}</a></li>
             {% if "menu" in g.site.active_modules %}
             <li><a href="/menu/">{% trans %}Menu{% endtrans %}</a></li>
+            {% endif %}
+            {% if "pages" in g.site.active_modules %}
+            <li><a href="/pages/">{% trans %}Pages{% endtrans %}</a></li>
             {% endif %}
             {% if "blog" in g.site.active_modules %}
             <li><a href="/b/">{% trans %}Blog{% endtrans %}</a></li>

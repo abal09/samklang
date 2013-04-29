@@ -291,7 +291,7 @@ def menu():
 
 @app.route("/a/m/", methods=["POST", "GET"])
 def modules():
-    available_modules = ["menu", "blog", "portfolio"]
+    available_modules = ["menu", "pages", "blog", "portfolio"]
 
     if request.method == "POST" and g.user == g.site.domain:
         site_changed = False

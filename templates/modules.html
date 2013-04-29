@@ -26,6 +26,15 @@
 <input type="checkbox" name="menu_active" />
 {% endif %}
 
+<h3>{% trans %}Pages{% endtrans %}</h3>
+
+<label for="pages_active">{% trans %}Active{% endtrans %}</label>
+{% if "pages" in g.site.active_modules %}
+<input type="checkbox" name="pages_active" checked="checked" />
+{% else %}
+<input type="checkbox" name="pages_active" />
+{% endif %}
+
 <h3>{% trans %}Blog{% endtrans %}</h3>
 
 <label for="blog_active">{% trans %}Active{% endtrans %}</label>
