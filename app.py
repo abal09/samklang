@@ -7,9 +7,10 @@ from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
 from flask.ext.babel import Babel, format_datetime, format_date, format_time
 from flask.ext.babel import gettext as _
-from models import Site, File, Page, MenuLink
-from utils import save_file, slugify
+from models import Site, File, MenuLink
+from utils import save_file
 from blog import blog
+from pages import pages
 from portfolio import portfolio
 
 from hashlib import sha1
@@ -17,6 +18,7 @@ from hashlib import sha1
 app = Flask(__name__, instance_relative_config=True)
 app.register_blueprint(blog)
 app.register_blueprint(portfolio)
+app.register_blueprint(pages)
 app.config.from_object('config')
 app.config.from_pyfile('config.cfg', silent=True)
 db = MongoEngine(app)
@@ -286,42 +288,6 @@ def menu():
         return redirect(url_for("menu"))
 
     return render_template("menu.html", menu_links=g.site.menu_links)
-
-@app.route("/pages/", methods=["POST", "GET"])
-def pages():
-    if request.method == "POST" and g.site.domain == g.user:
-        name = request.form['name']
-        if name:
-            p = Page()
-            p.name = name
-            p.slug = slugify(name)
-            p.site = g.site.domain
-            p.save()
-            return redirect(url_for("edit_page", slug=p.slug))
-    pages = Page.objects(site=g.site.domain)
-    return render_template('pages.html', pages=pages)
-
-@app.route("/<slug>/")
-def page(slug):
-    try:
-        page = Page.objects.get(slug=slug, site=g.site.domain)
-    except Page.DoesNotExist:
-        abort(404)
-    return render_template("page.html", page=page)
-
-@app.route("/<slug>/edit", methods=["POST", "GET"])
-def edit_page(slug):
-    try:
-        page = Page.objects.get(slug=slug, site=g.site.domain)
-    except Page.DoesNotExist:
-        abort(404)
-
-    if request.method == "POST" and g.site.domain == g.user:
-        page.name = request.form["name"]
-        page.content = request.form["content"]
-        page.save()
-        return redirect(url_for("page", slug=page.slug))
-    return render_template("edit_page.html", page=page)
 
 
 if __name__ == "__main__":

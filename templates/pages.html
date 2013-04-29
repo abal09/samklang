@@ -28,7 +28,7 @@
 <table>
     {% for page in pages %}
     <tr>
-        <td><a href="{{ url_for('page', slug=page.slug) }}">{{ page.name }}</a></td>
+        <td><a href="{{ url_for('.page', slug=page.slug) }}">{{ page.name }}</a></td>
         <td>{{ page.created }}</td>
     </tr>
     {% endfor %}
