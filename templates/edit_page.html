@@ -2,16 +2,23 @@
 
 {% block title %}{% trans %}Edit page{% endtrans %}{% endblock %}
 
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a class="button success" onclick="$('#primary-form').submit()">{% trans %}Save{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
 {% block main %}
 
 {% if g.user == g.site.domain %}
-<form method="POST" id="editform">
+<form method="POST" id="primary-form">
 
-    <button type="submit" style="float:right">{% trans %}Save{% endtrans %}</button>
+    <h1>{% trans %}Edit page{% endtrans %}</h1>
 
     <label for="name">{% trans %}Page name{% endtrans %}</label>
     <input type="type" name="name" id="name" value="{{ page.name }}">
-
 
     <label for="description">{% trans %}Home page contents{% endtrans %}</label>
     <div class="button-bar" id="wysihtml5-toolbar" style="display: none;">
@@ -44,6 +51,8 @@
     <section id="form-contents">
         <textarea name="content" id="w5-textarea" autofocus>{{ page.content|default("", true) }}</textarea>
     </section>
+
+    <button type="submit" class="success">{% trans %}Save{% endtrans %}</button>
 </form>
 {% endif %}
 {% endblock main %}
