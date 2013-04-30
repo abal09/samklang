@@ -19,7 +19,7 @@
     <a href="{{ url_for('media', filename=file.slug) }}">{{ url_for('media', filename=file.slug) }}</a>
 </div>
 <div class="small-2 columns">
-    <a class="button secondary small delete_file" href="{{ url_for('files_delete', id=file.id) }}">{% trans %}Delete{% endtrans %}</a>
+    <a class="button secondary small delete_file right" href="{{ url_for('files_delete', id=file.id) }}">{% trans %}Delete{% endtrans %}</a>
 </div>
 </div>
 {% endfor %}
