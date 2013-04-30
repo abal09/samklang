@@ -3,7 +3,7 @@
 {% block main %}
 {% if g.site.header_image %}
 <div id="header">
-    <p>{{ g.site.name }}</p>
+    <a href="/"><img src="{{ url_for('media', filename=g.site.header_image) }}"></a>
 </div>
 {% endif %}
 
