@@ -9,18 +9,20 @@
     </div>
 </form>
 
-<table style="width: 100%">
-    {% for file in files %}
-    <tr>
-        <td><img class="thumbnail" src="{{ url_for('media', filename=file.slug) }}"></td>
-        <td>{{ file.name}}</td>
-        <td>{{ file.content_type }}</td>
-        <td>{{ file.content_length }}</td>
-        <td>{{ file.slug }}</td>
-        <td><a class="button secondary small delete_file" href="{{ url_for('files_delete', id=file.id) }}">Delete</td>
-    </tr>
-    {% endfor %}
-    </table>
+{% for file in files %}
+<div class="row">
+    <div class="small-2 columns">
+    <img src="{{ url_for('media', filename=file.slug) }}" style="max-width: 120px">
+</div>
+    <div class="small-8 columns">
+    <h2>{{ file.name}}</h2>
+    <a href="{{ url_for('media', filename=file.slug) }}">{{ url_for('media', filename=file.slug) }}</a>
+</div>
+<div class="small-2 columns">
+    <a class="button secondary small delete_file" href="{{ url_for('files_delete', id=file.id) }}">{% trans %}Delete{% endtrans %}</a>
+</div>
+</div>
+{% endfor %}
 {% endblock %}
 
 {% block js %}
@@ -41,29 +43,6 @@ $(document).ready(function() {
                 });
             }
         });
-    });
-
-    $('img.thumbnail').each(function() {
-        var maxWidth = 120;
-        var maxHeight = 80;
-        var ratio = 0;
-        var width = $(this).width();
-        var height = $(this).height();
-
-        if(width > maxWidth){
-            ratio = maxWidth / width;
-            $(this).css("width", maxWidth);
-            $(this).css("height", height * ratio);
-            height = height * ratio;
-            width = width * ratio;
-        }
-
-        if(height > maxHeight){
-            ratio = maxHeight / height;
-            $(this).css("height", maxHeight);
-            $(this).css("width", width * ratio);
-            width = width * ratio;
-        }
     });
 });
 </script>

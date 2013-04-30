@@ -268,7 +268,7 @@ def files():
         f.name = reqfile.filename
         f.slug = secure_filename(f.name)
         f.content_type = reqfile.mimetype
-        f.slug, f.content_length = save_file(reqfile)
+        f.slug, f.content_length = save_file(reqfile, app.config["UPLOAD_FOLDER"])
         f.save()
 
     files = File.objects(site=g.site.domain)
