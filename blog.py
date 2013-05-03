@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, abort, request, g, redirect, url_for
+from flask import Blueprint, render_template, abort, request, g, redirect, url_for, current_app
 from models import Blog, Post, File
 from utils import save_file, slugify
 
@@ -18,10 +18,7 @@ def show_blog():
 def edit_blog():
     if not g.site.domain == g.user:
         abort(403)
-    try:
-        b = Blog.objects.get(site=g.site.domain)
-    except Blog.DoesNotExist:
-        b = Blog.objects.create(site=g.site.domain)
+    b, created = Blog.objects.create(site=g.site.domain)
 
     if request.method == "POST":
         b.title = request.form.get("title")
@@ -90,11 +87,10 @@ def edit_post(year, month, day, slug):
             f.site = g.site.domain
             f.name = reqfile.filename
             f.content_type = reqfile.mimetype
-            f.slug, f.content_length = save_file(reqfile, blog.config["UPLOAD_FOLDER"])
+            f.slug, f.content_length = save_file(reqfile, current_app.config["UPLOAD_FOLDER"])
             f.save()
 
         p.name = request.form.get("name")
-        #j.slug = slugify(j.name)
         p.text = request.form.get("text")
         if reqfile:
             p.image_slug = f.slug
