@@ -42,6 +42,9 @@
             {% if "portfolio" in g.site.active_modules %}
             <li><a href="/p/">{% trans %}Portfolio{% endtrans %}</a></li>
             {% endif %}
+            {% if "personnel" in g.site.active_modules %}
+            <li><a href="/d/">{% trans %}Personnel{% endtrans %}</a></li>
+            {% endif %}
         </ul>
         <ul class="right">
             {% block context_menu %}{% endblock %}

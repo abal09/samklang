@@ -12,12 +12,14 @@ from utils import save_file
 from blog import blog
 from pages import pages
 from portfolio import portfolio
+from personnel import personnel
 
 from hashlib import sha1
 
 app = Flask(__name__, instance_relative_config=True)
 app.register_blueprint(blog)
 app.register_blueprint(portfolio)
+app.register_blueprint(personnel)
 app.register_blueprint(pages)
 app.config.from_object('config')
 app.config.from_pyfile('config.cfg', silent=True)
@@ -308,7 +310,7 @@ def menu():
 
 @app.route("/a/m/", methods=["POST", "GET"])
 def modules():
-    available_modules = ["menu", "pages", "blog", "portfolio"]
+    available_modules = ["menu", "pages", "blog", "portfolio", "personnel"]
 
     if request.method == "POST" and g.user == g.site.domain:
         site_changed = False

@@ -53,6 +53,14 @@
 <input type="checkbox" name="portfolio_active" />
 {% endif %}
 
+<h3>{% trans %}Personnel{% endtrans %}</h3>
+
+<label for="personnel_active">{% trans %}Active{% endtrans %}</label>
+{% if "personnel" in g.site.active_modules %}
+<input type="checkbox" name="personnel_active" checked="checked" />
+{% else %}
+<input type="checkbox" name="personnel_active" />
+{% endif %}
 
 <div>
 <button type="submit" class="success">{% trans %}Save{% endtrans %}</button>

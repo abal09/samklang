@@ -145,3 +145,33 @@ class Post(Document):
 
     def __unicode__(self):
         return self.name
+
+class Person(Document):
+    site = StringField(required=True)
+    name = StringField(required=True)
+    slug = StringField(required=True)
+    title = StringField()
+    phone = StringField()
+    email = StringField()
+    twitter = StringField()
+    facebook = StringField()
+    linkedin = StringField()
+    description = StringField()
+    image_slug = StringField()
+
+    def __unicode__(self):
+        return self.name
+
+class Personnel(Document):
+    site = StringField(required=True)
+    title = StringField()
+    subtitle = StringField()
+    people = ListField(StringField())
+    effect = StringField()
+    per_line = IntField(default=4)
+
+    def __unicode__(self):
+        if self.title:
+            return self.title
+        else:
+            return _("Personnel")

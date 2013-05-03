@@ -1,0 +1,50 @@
+{% extends "normal.html" %}
+
+{% block title %}{{ personnel }}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a href="{{ url_for('.edit_personnel') }}" class="button">{% trans %}Edit{% endtrans %}</a>
+</li>
+<li class="has-form">
+<a href="{{ url_for('.new_person') }}" class="button">{% trans %}Add person{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<h1>{{ personnel }}</h1>
+
+{% if personnel.subtitle %}
+<h2 class="subheader">{{ personnel.subtitle }}</h2>
+{% endif %}
+
+<ul class="large-block-grid-{{ personnel.per_line }}">
+{% for person in people %}
+<li>
+<a href="{{ url_for('.show_person', slug=person.slug) }}">
+{% if person.image_slug %}
+<img src="{{ url_for('media', filename=person.image_slug) }}">
+{% endif %}
+<h2>{{ person.name }}</h2>
+{% if person.title %}
+<h3 class="subheader">{{ person.title }}</h3>
+{% endif %}
+</a>
+{% if person.phone %}
+<div>{{ person.phone }}</div>
+{% endif %}
+{% if person.email %}
+<div>{{ person.email }}</div>
+{% endif %}
+{% if person.twitter %}
+<div>@{{ person.twitter }}</div>
+{% endif %}
+{% if person.description %}
+<div>{{ person.description|safe }}</div>
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+{% endblock content %}

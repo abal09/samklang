@@ -1,0 +1,41 @@
+{% extends "normal.html" %}
+
+{% block title %}{{ person.name }}{% endblock %}
+
+{% block context_menu %}
+{% if g.site.domain == g.user %}
+<li class="has-form">
+<a href="{{ url_for('.edit_person', slug=person.slug) }}" class="button">{% trans %}Edit{% endtrans %}</a>
+</li>
+{% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="large-5 columns">
+        {% if person.image_slug %}
+        <img src="{{ url_for('media', filename=person.image_slug) }}">
+        {% endif %}
+    </div>
+    <div class="large-7 columns">
+        <h1>{{ person.name }}</h1>
+
+        {% if person.title %}
+        <h2 class="subheader">{{ person.title }}</h2>
+        {% endif %}
+        {% if person.phone %}
+        <div>{{ person.phone }}</div>
+        {% endif %}
+        {% if person.email %}
+        <div>{{ person.email }}</div>
+        {% endif %}
+        {% if person.twitter %}
+        <div>@{{ person.twitter }}</div>
+        {% endif %}
+        {% if person.description %}
+        <div class="raw">{{ person.description|safe }}</div>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
