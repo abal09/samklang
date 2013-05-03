@@ -10,14 +10,8 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/foundation.css') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='css/stylesheet.css') }}" />
-  {% if g.site.header_image %}
-  <style>
-#header {
-    background-image: url({{ url_for('media', filename=g.site.header_image, suffix="png") }});
-}
-    </style>
-  {% endif %}
   {% block css_files %}{% endblock %}
+  {% block css_menu %}{% endblock %}
 
   <script src="{{ url_for('static', filename='js/vendor/custom.modernizr.js') }}"></script>
 
@@ -37,7 +31,7 @@
             <li><a href="/a/m/">{% trans %}Modules{% endtrans %}</a></li>
             <li><a href="/files/">{% trans %}Files{% endtrans %}</a></li>
             {% if "menu" in g.site.active_modules %}
-            <li><a href="/menu/">{% trans %}Menu{% endtrans %}</a></li>
+            <li><a href="/a/l/">{% trans %}Menu{% endtrans %}</a></li>
             {% endif %}
             {% if "pages" in g.site.active_modules %}
             <li><a href="/pages/">{% trans %}Pages{% endtrans %}</a></li>

@@ -8,6 +8,17 @@ class MenuLink(EmbeddedDocument):
     text = StringField(required=True)
     link = StringField(required=True)
 
+class Menu(Document):
+    site = StringField(required=True)
+    links = ListField(EmbeddedDocumentField(MenuLink))
+    simple = BooleanField(default=False)
+    background_color = StringField()
+    hover_background_color = StringField()
+    text_color = StringField()
+    hover_text_color = StringField()
+    active_background_color = StringField()
+    active_text_color = StringField()
+
 class Site(Document):
     domain = StringField(required=True)
     owner_email = StringField()  # Will get deprecated when user models arrive
@@ -17,7 +28,6 @@ class Site(Document):
     header_image = StringField()
     footers = ListField(StringField())
     active_modules = ListField(StringField())
-    menu_links = ListField(EmbeddedDocumentField(MenuLink))
     created = DateTimeField(default=datetime.datetime.now)
 
     meta = {

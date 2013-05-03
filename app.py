@@ -7,7 +7,7 @@ from flask.ext.mongoengine import MongoEngine
 from flask.ext.sendmail import Mail, Message
 from flask.ext.babel import Babel, format_datetime, format_date, format_time
 from flask.ext.babel import gettext as _
-from models import Site, File, MenuLink
+from models import Site, File, Menu, MenuLink
 from utils import save_file
 from blog import blog
 from pages import pages
@@ -52,6 +52,8 @@ def add_site():
     if g.site is None:
         abort(404)
     g.user = session.get("username", None)
+    if "menu" in g.site.active_modules:
+        g.menu, created = Menu.objects.get_or_create(site=g.site.domain)
 
 # fake login
 @app.route("/login", methods=["POST", "GET"])
@@ -274,20 +276,35 @@ def files():
     files = File.objects(site=g.site.domain)
     return render_template('files.html', files=files)
 
-@app.route("/menu/", methods=["POST", "GET"])
+@app.route("/a/l/", methods=["POST", "GET"])
 def menu():
+    if "menu" in g.site.active_modules:
+        menu = g.menu
+
     if request.method == "POST" and g.site.domain == g.user:
         if "username" in session and g.user == g.site.domain:
-            texts = request.form.getlist("text")
-            links = request.form.getlist("link")
-            g.site.menu_links = []
-            for text, link in zip(texts, links):
-                if text and link:
-                    g.site.menu_links.append(MenuLink(text=text, link=link))
-            g.site.save()
+                texts = request.form.getlist("text")
+                links = request.form.getlist("link")
+                menu.links = []
+                for text, link in zip(texts, links):
+                    if text and link:
+                        menu.links.append(MenuLink(text=text, link=link))
+                simple = request.form.get("simple", False)
+                print simple
+                if simple:
+                    menu.simple = True
+                else:
+                    menu.simple = False
+                menu.text_color = request.form.get("text_color", None)
+                menu.active_text_color = request.form.get("active_text_color", None)
+                menu.hover_text_color = request.form.get("hover_text_color", None)
+                menu.background_color = request.form.get("background_color", None)
+                menu.active_background_color = request.form.get("active_background_color", None)
+                menu.hover_background_color = request.form.get("hover_background_color", None)
+                menu.save()
         return redirect(url_for("index"))
 
-    return render_template("menu.html", menu_links=g.site.menu_links)
+    return render_template("menu.html")
 
 @app.route("/a/m/", methods=["POST", "GET"])
 def modules():

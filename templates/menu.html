@@ -12,9 +12,54 @@
 
 {% block main %}
 <h1>{% trans %}Site menu{% endtrans %}</h1>
-<p>{% trans %}Here you control the contents of your menu. Rows with empty values will not get saved.{% endtrans %}</p>
-<form method="POST" id="primary-form">
-{% for menu_link in menu_links %}
+
+<form method="POST" id="primary-form" class="custom">
+    <label for="simple">
+    {% if g.menu.simple %}
+    <input type="checkbox" id="simple" name="simple" style="display: none;">
+    <span class="custom checkbox checked"></span>
+    {% else %}
+    <input type="checkbox" id="simple" name="simple" style="display: none;">
+    <span class="custom checkbox"></span>
+    {% endif %}
+    {% trans %}Use simpler, centered menu layout (Aloha mode){% endtrans %}
+    </label>
+
+    <h2>{% trans %}Color settings{% endtrans %}</h2>
+<p>{% trans %}It is fully optional to set the colors of your menu. Empty should use decent default colors.{% endtrans %}</p>
+<div class="row">
+    <div class="small-4 columns">
+        <label>{% trans %}Primary text color{% endtrans %}</label>
+        <input type="text" name="text_color" value="{{ g.menu.text_color|default("", true) }}">
+    </div>
+    <div class="small-4 columns">
+        <label>{% trans %}Active text color{% endtrans %}</label>
+        <input type="text" name="active_text_color" value="{{ g.menu.active_text_color|default("", true) }}">
+    </div>
+    <div class="small-4 columns">
+        <label>{% trans %}Hover text color{% endtrans %}</label>
+        <input type="text" name="hover_text_color" value="{{ g.menu.hover_text_color|default("", true) }}">
+    </div>
+</div>
+
+<div class="row">
+    <div class="small-4 columns">
+        <label>{% trans %}Primary background color{% endtrans %}</label>
+        <input type="text" name="background_color" value="{{ g.menu.background_color|default("", true) }}">
+    </div>
+    <div class="small-4 columns">
+        <label>{% trans %}Active background color{% endtrans %}</label>
+        <input type="text" name="active_background_color" value="{{ g.menu.active_background_color|default("", true) }}">
+    </div>
+    <div class="small-4 columns">
+        <label>{% trans %}Hover background color{% endtrans %}</label>
+        <input type="text" name="hover_background_color" value="{{ g.menu.hover_background_color|default("", true) }}">
+    </div>
+</div>
+
+<h2>{% trans %}Menu contents{% endtrans %}</h2>
+<p>{% trans %}Control the contents of your menu. Rows with empty values will not get saved.{% endtrans %}</p>
+{% for menu_link in g.menu.links %}
 <div class="row">
     <div class="small-12 columns">
         <h2>{% trans number=loop.index %}Menu element {{ number }}{% endtrans %}</h2>
@@ -31,7 +76,7 @@
 {% endfor %}
 <div class="row">
     <div class="small-12 columns">
-        <h2>{% trans %}Fill in this entry if you need it{% endtrans %}</h2>
+        <h3>{% trans %}New entry. Fill in this if you need it.{% endtrans %}</h3>
     </div>
     <div class="small-6 columns">
         <label>{% trans %}Label{% endtrans %}</label>
@@ -47,6 +92,8 @@
         <button type="submit" class="success">{% trans %}Save{% endtrans %}</button>
     </div>
 </div>
+
+
 </form>
 
 {% endblock %}

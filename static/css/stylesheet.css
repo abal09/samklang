@@ -29,6 +29,19 @@ p {
     margin-top: 20px;
 }
 
+.simple-menu {
+    list-style: none;
+    margin-top: 10px;
+    display: inline;
+}
+.simple-menu a {
+    font-weight: bold;
+    font-size: 20px;
+    padding: 15px;
+}
+.simple-menu a:hover {
+}
+
 #admin-button {
     float: right;
 }

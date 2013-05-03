@@ -1,13 +1,58 @@
 {% extends "base.html" %}
 
+{% block css_menu %}
+<style>
+{% if g.menu.background_color %}
+#site-top-bar {
+    background-color: {{ g.menu.background_color }};
+}
+.top-bar-section ul {
+    background-color: {{ g.menu.background_color }};
+}
+{% endif %}
+#site-top-bar a {
+    {% if g.menu.text_color %}
+    color: {{ g.menu.text_color }};
+    {% endif %}
+    {% if g.menu.background_color %}
+    background-color: {{ g.menu.background_color }};
+    {% endif %}
+}
+#site-top-bar a:hover {
+    {% if g.menu.hover_text_color %}
+    color: {{ g.menu.hover_text_color }};
+    {% endif %}
+    {% if g.menu.hover_background_color %}
+    background-color: {{ g.menu.hover_background_color }};
+    {% endif %}
+}
+</style>
+{% endblock %}
+
 {% block main %}
+
+{% if "menu" in g.site.active_modules %}
+{% if g.menu.simple %}
+<div id="header" class="pagination-centered">
+{% if g.site.header_image %}
+    <a href="/"><img src="{{ url_for('media', filename=g.site.header_image) }}"></a>
+{% endif %}
+<nav class="top-bar" id="site-top-bar">
+<section class="top-bar-section pagination-centered">
+<ul class="">
+    {% for menu_link in g.menu.links %}
+    <li><a class="" href="{{ menu_link.link }}">{{ menu_link.text }}</a></li>
+    {% endfor %}
+</ul>
+</section>
+</nav>
+</div>
+{% else %}
 {% if g.site.header_image %}
 <div id="header">
     <a href="/"><img src="{{ url_for('media', filename=g.site.header_image) }}"></a>
 </div>
 {% endif %}
-
-{% if "menu" in g.site.active_modules %}
 <nav class="top-bar" id="site-top-bar">
     <ul class="title-area">
         <li class="name">
@@ -18,12 +63,19 @@
 
     <section class="top-bar-section">
         <ul class="left">
-            {% for menu_link in g.site.menu_links %}
+            {% for menu_link in g.menu.links %}
             <li><a href="{{ menu_link.link }}">{{ menu_link.text }}</a></li>
             {% endfor %}
         </ul>
     </section>
 </nav>
+{% endif %}
+{% else %}
+{% if g.site.header_image %}
+<div id="header">
+    <a href="/"><img src="{{ url_for('media', filename=g.site.header_image) }}"></a>
+</div>
+{% endif %}
 {% endif %}
 
 {% block content %}
