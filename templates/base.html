@@ -194,6 +194,15 @@
   {% block js_files %}{% endblock js_files %}
   <script>
     $(document).foundation();
+    $(document).ready(function() {
+        var pathname = window.location.pathname;
+        console.log(pathname)
+        $('.top-bar-section li a').each(function (el) {
+            if ($(this).attr("href") === pathname) {
+                $(this).parent().addClass("active");
+            }
+        });
+    });
   </script>
   {% block js %}{% endblock js %}
 </body>

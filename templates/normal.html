@@ -18,12 +18,24 @@
     background-color: {{ g.menu.background_color }};
     {% endif %}
 }
+#site-top-bar .top-bar-section ul li.active a {
+    {% if g.menu.active_text_color %}
+    color: {{ g.menu.active_text_color }};
+    {% endif %}
+    {% if g.menu.active_background_color %}
+    background-color: {{ g.menu.active_background_color }};
+    {% endif %}
+}
 #site-top-bar a:hover {
     {% if g.menu.hover_text_color %}
     color: {{ g.menu.hover_text_color }};
+    {% elif g.menu.active_text_color %}
+    color: {{ g.menu.active_text_color }};
     {% endif %}
     {% if g.menu.hover_background_color %}
     background-color: {{ g.menu.hover_background_color }};
+    {% elif g.menu.active_background_color %}
+    background-color: {{ g.menu.active_background_color }};
     {% endif %}
 }
 </style>
@@ -41,7 +53,7 @@
 <section class="top-bar-section pagination-centered">
 <ul class="">
     {% for menu_link in g.menu.links %}
-    <li><a class="" href="{{ menu_link.link }}">{{ menu_link.text }}</a></li>
+    <li><a href="{{ menu_link.link }}">{{ menu_link.text }}</a></li>
     {% endfor %}
 </ul>
 </section>
