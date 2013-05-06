@@ -9,7 +9,7 @@ def show_blog():
     try:
         if not "blog" in g.site.active_modules:
             raise(Blog.DoesNotExist)
-        b = Blog.objects.get(site=g.site.domain)
+        b, created = Blog.objects.get_or_create(site=g.site.domain)
     except Blog.DoesNotExist:
         abort(404)
     return render_template("blog.html", blog=b)
@@ -18,7 +18,7 @@ def show_blog():
 def edit_blog():
     if not g.site.domain == g.user:
         abort(403)
-    b, created = Blog.objects.create(site=g.site.domain)
+    b, created = Blog.objects.get_or_create(site=g.site.domain)
 
     if request.method == "POST":
         b.title = request.form.get("title")
