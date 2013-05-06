@@ -56,6 +56,8 @@ def add_site():
     g.user = session.get("username", None)
     if "menu" in g.site.active_modules:
         g.menu, created = Menu.objects.get_or_create(site=g.site.domain)
+    else:
+        g.menu = None
 
 # fake login
 @app.route("/login", methods=["POST", "GET"])
