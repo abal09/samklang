@@ -31,6 +31,11 @@ app.jinja_env.filters['datetime'] = format_datetime
 app.jinja_env.filters['date'] = format_date
 app.jinja_env.filters['time'] = format_time
 
+import logging
+file_handler = logging.FileHandler(app.config.get("logfile", 'samklang.log'))
+file_handler.setLevel(logging.WARNING)
+app.logger.addHandler(file_handler)
+
 admins = app.config.get("ADMINS", [])
 error_sender = app.config.get("ERROR_SENDER", None)
 smtp_server = app.config.get("SMTP_SERVER", None)
