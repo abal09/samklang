@@ -31,6 +31,16 @@ app.jinja_env.filters['datetime'] = format_datetime
 app.jinja_env.filters['date'] = format_date
 app.jinja_env.filters['time'] = format_time
 
+admins = app.config.get("ADMINS", [])
+error_sender = app.config.get("ERROR_SENDER", None)
+smtp_server = app.config.get("SMTP_SERVER", None)
+if admins and error_sender and smtp_server and not app.debug:
+    import logging
+    from logging.handlers import SMTPHandler
+    mail_handler = SMTPHandler(smtp_server, error_sender, admins,
+            _('Samklang Error'))
+    mail_handler.setLevel(logging.ERROR)
+    app.logger.addHandler(mail_handler)
 
 @babel.localeselector
 def get_locale():
