@@ -11,3 +11,4 @@ MAIL_DEFAULT_SENDER = None
 #MAIL_ERROR_SENDER = "onlythemessenger@test.samklang.no"
 ADMIN_EMAIL = ""
 ADMINS = []
+#LOGFILE = "samklang.log"

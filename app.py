@@ -32,7 +32,7 @@ app.jinja_env.filters['date'] = format_date
 app.jinja_env.filters['time'] = format_time
 
 import logging
-file_handler = logging.FileHandler(app.config.get("logfile", 'samklang.log'))
+file_handler = logging.FileHandler(app.config.get("LOGFILE", 'samklang.log'))
 file_handler.setLevel(logging.WARNING)
 app.logger.addHandler(file_handler)
 
