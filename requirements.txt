@@ -1,5 +1,5 @@
 flask-mongoengine
-flask-sendmail
+flask-mail
 gunicorn
 unidecode
 flask-babel

@@ -19,6 +19,11 @@ class Menu(Document):
     active_background_color = StringField()
     active_text_color = StringField()
 
+class LoginToken(Document):
+    site = StringField(required=True)
+    code = StringField(required=True)
+    created = DateTimeField(default=datetime.datetime.now)
+
 class Site(Document):
     domain = StringField(required=True)
     owner_email = StringField()  # Will get deprecated when user models arrive

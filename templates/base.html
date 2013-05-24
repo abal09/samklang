@@ -50,6 +50,7 @@
             {% block context_menu %}{% endblock %}
             <li class="has-dropdown"><a>{{ g.user }}</a>
             <ul class="dropdown">
+                <li><a href="{{ url_for('sites') }}">{% trans %}Sites{% endtrans %}</a></li>
                 <li><a href="{{ url_for('logout') }}">{% trans %}Log out{% endtrans %}</a></li>
             </ul>
             </li>

@@ -1,13 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, session, g, flash, abort
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, jsonify, session, g, flash
 from werkzeug import secure_filename
 from flask.ext.mongoengine import MongoEngine
-from flask.ext.sendmail import Mail, Message
+from flask_mail import Mail, Message
 from flask.ext.babel import Babel, format_datetime, format_date, format_time
 from flask.ext.babel import gettext as _
-from models import Site, File, Menu, MenuLink
+from models import Site, File, Menu, MenuLink, LoginToken
 from utils import save_file
 from blog import blog
 from pages import pages
@@ -37,8 +37,8 @@ file_handler.setLevel(logging.WARNING)
 app.logger.addHandler(file_handler)
 
 admins = app.config.get("ADMINS", [])
-error_sender = app.config.get("ERROR_SENDER", None)
-smtp_server = app.config.get("SMTP_SERVER", None)
+error_sender = app.config.get("MAIL_ERROR_SENDER", "no-reply@localhost")
+smtp_server = app.config.get("MAIL_SERVER", "localhost")
 if admins and error_sender and smtp_server and not app.debug:
     import logging
     from logging.handlers import SMTPHandler
@@ -67,7 +67,34 @@ def get_timezone():
 def add_site():
     g.site = Site.get_by_hostname(request.host, app.config.get("DOMAIN_ROOT"))
     if g.site is None:
-        abort(404)
+        if not app.config.get("DOMAIN_ROOT"):
+            return _("Config is missing a DOMAIN_ROOT: the domain name of your "
+                    "main site.")
+        if not app.config.get("ADMINS"):
+            return _("Config is missing ADMINS: used for login to your "
+                    "first site and recipient of error messages.")
+        name = app.config.get("ROOT_SITE_NAME", _("Your new site"))
+        description = _("This is your new site. This is also your root site, "
+                "and this can be used to create other sites.")
+
+        root_site, created = Site.objects.get_or_create(
+                domain=app.config.get("DOMAIN_ROOT"),
+                defaults={
+                    "name": name,
+                    "description" :"<h1>%s</h1><p>%s</p>" % (
+                        name, description),
+                    "owner_email": None,
+                    "verified_email": True
+                    })
+        port = app.config.get("PORT", None)
+        url = "//%s" % root_site.domain
+        if port:
+            url += ":%d" % port
+        if created:
+            return redirect(url)
+        else:
+            return redirect("%s%s" % (url, url_for("sites")))
+
     g.user = session.get("username", None)
     if "menu" in g.site.active_modules:
         g.menu, created = Menu.objects.get_or_create(site=g.site.domain)
@@ -92,7 +119,14 @@ def login():
 
     if request.method == "POST":
         email = request.form.get("email", None)
-        if email != g.site.owner_email:
+        admin_found = False
+        if not g.site.owner_email and g.site.domain == app.config.get("DOMAIN_ROOT"):
+            for admin in app.config.get("ADMINS"):
+                if email == admin[1]:
+                    admin_found = True
+                    break
+
+        if email != g.site.owner_email and not admin_found:
             flash(
                     _("That email address (%(email)s) does not match the owner "
                         "email address of this domain",
@@ -104,9 +138,13 @@ def login():
 
         code = sha1()
         code.update(g.site.domain)
-        code.update(g.site.owner_email)
+        code.update(email)
         code.update(app.config["SECRET_KEY"])
-        # TODO; Add some timing requirements as well
+
+        token = LoginToken()
+        token.site = g.site.domain
+        token.code = code.hexdigest()
+        token.save()
 
         host = g.site.domain
         if root_domain:
@@ -115,8 +153,7 @@ def login():
             host += ":%d" % port
 
         message = Message(_("Log in to %(host)s", host=g.site.domain),
-                sender=("Samklang", "login@samklang.no"),
-                recipients=[g.site.owner_email],
+                recipients=[email],
                 )
         message.body = _(
                 "Log in to samklang by clicking the following link:\r\n\r\n"
@@ -129,7 +166,7 @@ def login():
                 )
         mail.send(message)
         flash(_(
-            "You should soon get an soon. Click the link inside it to log in."
+            "You should soon get an email soon. Click the link inside it to log in."
             ))
         return redirect(url_for("index"))
     return render_template("login.html")
@@ -162,7 +199,6 @@ def add_email():
                 host += ":%d" % port
 
             message = Message(_("Verify your email"),
-                    sender=("Samklang", "login@samklang.no"),
                     recipients=[email],
                     )
             message.body = _(
@@ -183,17 +219,15 @@ def add_email():
 
 @app.route("/login/<verification_code>")
 def email_login(verification_code):
-    code = sha1()
-    code.update(g.site.domain)
-    code.update(g.site.owner_email)
-    code.update(app.config["SECRET_KEY"])
-
-    if verification_code == code.hexdigest():
+    try:
+        LoginToken.objects.get(code=verification_code, site=g.site.domain)
+        # TODO: add time limit check on previous line
+    except:
+        return _("The verification code is wrong or too old")
+    else:
         session["username"] = g.site.domain
         flash(_("You are now logged in"))
         return redirect(url_for('index'))
-    else:
-        return _("The verification code is wrong")
 
 @app.route("/admin/keep/<verification_code>")
 def email_verify(verification_code):
@@ -223,15 +257,12 @@ def sites():
             site = Site()
             site.name = name.strip()
             site.domain = domain.strip()
-            site.description = _("<h1>Introductory text</h1><p>This should "
-                    "contain simple help about what is changeable and how."
-                    "</p>")
             conflicting_site = Site.objects.filter(domain=site.domain).first()
             if not conflicting_site:
+                site.description = _("<h1>Introductory text</h1><p>This should "
+                        "contain simple help about what is changeable and how."
+                        "</p>")
                 site.save()
-                flash(_("You now have a new site. Play around with it for some "
-                    "time, or register by verifying your email address to keep "
-                    "it."))
                 url = "//%s" % site.domain
                 if root_domain:
                     url += ".%s" % root_domain
@@ -239,7 +270,10 @@ def sites():
                     url += ":%d" % port
                 return redirect(url)
         return redirect(url_for("sites"))
-    sites = Site.objects.all()  # use this for checking if domain name is available
+    if root_domain == g.site.domain:
+        sites = Site.objects.all()
+    else:
+        sites = Site.objects.filter(domain__endswith=g.site.domain)
     return render_template("sites.html", sites=sites, root_domain=root_domain, port=port)
 
 @app.route("/")

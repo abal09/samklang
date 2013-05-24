@@ -32,7 +32,7 @@
     </div>
 </form>
 
-<h1>{% trans %}All sites{% endtrans %}</h1>
+<h1>{% trans %}Site list{% endtrans %}</h1>
 <table>
     {% for site in sites %}
     <tr>
@@ -45,6 +45,13 @@
         :{{ port }}
         {%- endif -%}
         ">{{ site.domain }}</a></td>
+<td>
+    {% if site.verified_email %}
+    {% trans %}Verified{% endtrans %}
+    {% else %}
+    {% trans %}Not verified{% endtrans %}
+    {% endif %}
+</td>
         <td>{{ site.created }}</td>
     </tr>
     {% endfor %}
