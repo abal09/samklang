@@ -40,9 +40,16 @@ admins = app.config.get("ADMINS", [])
 error_sender = app.config.get("MAIL_ERROR_SENDER", "no-reply@localhost")
 smtp_server = app.config.get("MAIL_SERVER", "localhost")
 if admins and error_sender and smtp_server and not app.debug:
+    recipients = []
+    for admin in admins:
+        if isinstance(admin, tuple):
+            recipients.append("%s <%s>" % admin)
+        else:
+            recipients.append(admin)
+
     import logging
     from logging.handlers import SMTPHandler
-    mail_handler = SMTPHandler(smtp_server, error_sender, admins,
+    mail_handler = SMTPHandler(smtp_server, error_sender, recipients,
             _('Samklang Error'))
     mail_handler.setLevel(logging.ERROR)
     app.logger.addHandler(mail_handler)
